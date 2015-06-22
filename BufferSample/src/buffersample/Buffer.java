@@ -15,45 +15,52 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class Buffer<T> {
 
-    private T buffer;
+    private T[] cyclicBuffer;
     private final Lock lock;
-    private final Condition readerCondition;
-    private final Condition writerCondition;
+    private final Condition notFull;
+    private final Condition notEmpty;
+    private int head, tail, len;
 
-    public Buffer() {
-        this.buffer = null;
+    public Buffer(int size) {
+        this.cyclicBuffer = (T[]) new Object[size];
         this.lock = new ReentrantLock();
-        readerCondition = lock.newCondition();
-        writerCondition = lock.newCondition();
+        notFull = lock.newCondition();
+        notEmpty = lock.newCondition();
     }
-
-    public void put(T pack) throws InterruptedException {
+    
+    public void putToTail(T pack) throws InterruptedException {
         lock.lock();
         try {
-            while (buffer != null) {
-                writerCondition.await();
+            while (len == cyclicBuffer.length) {
+                notFull.await();
             }
-            buffer = pack;
-            readerCondition.signal();
-        } finally {
-            lock.unlock();
-        }
-
-    }
-
-    public T pop() throws InterruptedException {
-        lock.lock();
-        try {
-            while (buffer == null) {
-                readerCondition.await();
+            cyclicBuffer[tail] = pack;
+            if (++tail == cyclicBuffer.length) {
+                tail = 0;
             }
-            T local = buffer;
-            buffer = null;
-            writerCondition.signal();
-            return local;
+            ++len;
+            notEmpty.signal();            
         } finally {
             lock.unlock();
         }
     }
-
+    
+    public T peakFromHead() throws InterruptedException {
+        lock.lock();
+        try {
+            while(len == 0) {
+                notEmpty.await();
+            }
+            T result = cyclicBuffer[head];
+            cyclicBuffer[head] = null;
+            if (++head == cyclicBuffer.length) {
+                head = 0;
+            }
+            --len;
+            notFull.signal();
+            return result;
+        } finally {
+            lock.unlock();
+        }
+    }
 }

@@ -15,13 +15,13 @@ public class BufferSample {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        final Buffer<Integer> buff = new Buffer<>();
+        final Buffer<Integer> buff = new Buffer<>(5);
         Thread source1 = new Thread() {
             public void run() {
                 try {
-                    for (int i = 0; i < 1_000_000; i++) {
-                        buff.put(i);
-//                        System.out.println("1>" + i);
+                    for (int i = 0; i < 1_000_0; i++) {
+                        buff.putToTail(i);
+                        System.out.println(" " + " 1>   " + i);
                     }
                 } catch (InterruptedException ignore) { /* NOP */ }
             }
@@ -29,9 +29,19 @@ public class BufferSample {
         Thread source2 = new Thread() {
             public void run() {
                 try {
-                    for (int i = 0; i < 1_000_000; i++) {
-                        buff.put(i);
-//                        System.out.println("2>" + i);
+                    for (int i = 0; i < 1_000_0; i++) {
+                        buff.putToTail(i);
+                        System.out.println(" " + " 2>   " + i);
+                    }
+                } catch (InterruptedException ignore) { /* NOP */ }
+            }
+        };
+        Thread source3 = new Thread() {
+            public void run() {
+                try {
+                    for (int i = 0; i < 1_000_0; i++) {
+                        buff.putToTail(i);
+                        System.out.println(" " + " 3>   " + i);
                     }
                 } catch (InterruptedException ignore) { /* NOP */ }
             }
@@ -40,8 +50,8 @@ public class BufferSample {
             public void run() {
                 try {
                     Integer result;
-                    while ((result = buff.pop()) != null) {
-                        System.out.println("1< " + result);
+                    while ((result = buff.peakFromHead()) != null) {
+                        System.out.println(" " + " 1< " + result);
                     }
                 } catch (InterruptedException ignore) { /* NOP */ }
             }
@@ -50,8 +60,8 @@ public class BufferSample {
             public void run() {
                 try {
                     Integer result;
-                    while ((result = buff.pop()) != null) {
-                        System.out.println("2< " + result);
+                    while ((result = buff.peakFromHead()) != null) {
+                        System.out.println(" " + " 2< " + result);
                     }
                 } catch (InterruptedException ignore) { /* NOP */ }
             }
@@ -59,7 +69,8 @@ public class BufferSample {
         source2.start();
         target1.start();
         source1.start();
-        target2.start();
+        source3.start();
+//        target2.start();
     }
 
 }
