@@ -57,12 +57,12 @@ public class PointSET {
         }
         Point2D result = null;
         double distSQR = -1;
-        double next = 0;
+        double next;
         for (Point2D p0 : this.points) {
             next = p.distanceSquaredTo(p0);
             if (next < distSQR || distSQR < 0) {
                 distSQR = next;
-                result = p;
+                result = p0;
             }
         }
         return result;

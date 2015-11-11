@@ -4,7 +4,6 @@ import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
 import edu.princeton.cs.algs4.StdDraw;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Set;
 
 public class KdTree {
@@ -38,7 +37,7 @@ public class KdTree {
     }
 
     public void insert(Point2D p) {
-        
+
         root = insert(root, p, new RectHV(0.0, 0.0, 1.0, 1.0), false);
     }
 
@@ -135,27 +134,49 @@ public class KdTree {
     }
 
     public Iterable<Point2D> range(RectHV rect) {
-        return new LinkedList<>();  
-    }// all points that are inside the rectangle 
-    
-    private Set<Point2D> range(RectHV rect, Node node) {
-        if (node == null) {
-            return null;
-        }
-        if (!rect.intersects(node.rect)) {
-            return null;
-        }
-        Set<Point2D> points = new HashSet<>();
-        
-        points.addAll(range(rect, node.lb));
-        points.addAll(range(rect, node.rt));
-        
-        
+        Set<Point2D> result = new HashSet<>();
+        range(root, rect, result);
+        return result;
     }
-    
+
+    private void range(Node node, RectHV rect, Set<Point2D> points) {
+        if (node == null || !rect.intersects(node.rect)) {
+            return;
+        }
+
+        range(node.lb, rect, points);
+        range(node.rt, rect, points);
+
+        if (rect.contains(node.p)) {
+            points.add(node.p);
+        }
+    }
+
     public Point2D nearest(Point2D p) {
-        return null;
-    }// a nearest neighbor in the set to point p; null if the set is empty 
+        return nearest(root, p, root.p, false);
+    }
+
+    private Point2D nearest(Node node, Point2D p, Point2D candidate, boolean horizontal) {
+        if (node == null) {
+            return candidate;
+        }
+        double subDist = node.rect.distanceSquaredTo(p);
+        if (p.distanceSquaredTo(candidate) < subDist && !node.rect.contains(p)) {
+            return candidate;
+        }
+        Node first = node.rt;
+        Node second = node.lb;
+        if (!horizontal && p.x() < node.p.x() || horizontal && p.y() < node.p.y()) {
+            first = node.lb;
+            second = node.rt;
+        }
+        if (node.p.distanceSquaredTo(p) < candidate.distanceSquaredTo(p)) {
+            candidate = node.p;
+        }
+        candidate = nearest(first, p, candidate, horizontal);
+        candidate = nearest(second, p, candidate, horizontal);
+        return candidate;
+    }
 
     public static void main(String[] args) {
         System.out.println("tests");
