@@ -5,6 +5,7 @@ import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -22,7 +23,7 @@ public class SAP {
         List<Integer> commonAncestors = getCommonAncestor(v, w);
         BreadthFirstDirectedPaths pathsV = new BreadthFirstDirectedPaths(localG, v);
         BreadthFirstDirectedPaths pathsW = new BreadthFirstDirectedPaths(localG, w);
-        int length = Integer.MAX_VALUE;
+        Integer length = Integer.MAX_VALUE;
         for (Integer cmnAncestor : commonAncestors) {
             if (length > pathsV.distTo(cmnAncestor) + pathsW.distTo(cmnAncestor)) {
                 length = pathsV.distTo(cmnAncestor) + pathsW.distTo(cmnAncestor);
@@ -39,7 +40,7 @@ public class SAP {
         BreadthFirstDirectedPaths pathsV = new BreadthFirstDirectedPaths(localG, v);
         BreadthFirstDirectedPaths pathsW = new BreadthFirstDirectedPaths(localG, w);
         int ancestor = -1;
-        int length = Integer.MAX_VALUE;
+        Integer length = Integer.MAX_VALUE;
         for (Integer cmnAncestor : commonAncestors) {
             if (length > pathsV.distTo(cmnAncestor) + pathsW.distTo(cmnAncestor)) {
                 length = pathsV.distTo(cmnAncestor) + pathsW.distTo(cmnAncestor);
@@ -50,7 +51,7 @@ public class SAP {
     }
 
     public int length(Iterable<Integer> v, Iterable<Integer> w) {
-        int length = Integer.MAX_VALUE;
+        Integer length = Integer.MAX_VALUE;
         Set<Integer> commonAcestors = getCommonAncestors(v, w);
         BreadthFirstDirectedPaths vPaths = new BreadthFirstDirectedPaths(localG, v);
         BreadthFirstDirectedPaths wPaths = new BreadthFirstDirectedPaths(localG, w);
@@ -68,7 +69,7 @@ public class SAP {
     }
 
     public int ancestor(Iterable<Integer> v, Iterable<Integer> w) {
-        int length = Integer.MAX_VALUE;
+        Integer length = Integer.MAX_VALUE;
         int ancestor = -1;
         Set<Integer> commonAcestors = getCommonAncestors(v, w);
         BreadthFirstDirectedPaths vPaths = new BreadthFirstDirectedPaths(localG, v);
@@ -83,34 +84,36 @@ public class SAP {
         return ancestor;
     }
 
-    private Set<Integer> getAdjs(int v) {
-        Set<Integer> result = getAdjs0(v, new TreeSet<Integer>());
+    private Set<Integer> getAdjs(Integer v) {
+        Set<Integer> result = getAdjs0(v, new HashSet<Integer>());
+        result.add(v);
         return result;
     }
 
-    private Set<Integer> getAdjs0(int v, Set<Integer> adjs) {
+    private Set<Integer> getAdjs0(Integer v, Set<Integer> adjs) {
+        if (adjs.contains(v)) {
+            return adjs;
+        }
+        adjs.add(v);
         for (Integer vAdj : localG.adj(v)) {
-            if (!adjs.contains(vAdj)) {
-                adjs.add(vAdj);
-                adjs.addAll(getAdjs(vAdj));
-            }
+            adjs = getAdjs0(vAdj, adjs);
         }
         return adjs;
     }
 
     private Set<Integer> getCommonAncestors(Iterable<Integer> v, Iterable<Integer> w) {
-        Set<Integer> vAdjs = new TreeSet<>();
+        Set<Integer> vAdjs = new HashSet<>();
         for (Integer V : v) {
             vAdjs.add(V);
             vAdjs.addAll(getAdjs(V));
         }
-        
-        Set<Integer> wAdjs = new TreeSet<>();
+
+        Set<Integer> wAdjs = new HashSet<>();
         for (Integer W : w) {
             wAdjs.add(W);
             wAdjs.addAll(getAdjs(W));
         }
-        Set<Integer> commonAncestors = new TreeSet<>();
+        Set<Integer> commonAncestors = new HashSet<>();
         for (Integer vAdj : vAdjs) {
             for (Integer wAdj : wAdjs) {
                 if (vAdj.equals(wAdj)) {
@@ -118,21 +121,6 @@ public class SAP {
                 }
             }
         }
-//        for (Integer vAdj : vAdjs) {
-//            for (Integer W : w) {
-//                if (vAdj.equals(W)) {
-//                    commonAncestors.add(W);
-//                }
-//            }
-//        }
-//        for (Integer wAdj : wAdjs) {
-//            for (Integer V : v) {
-//                if (wAdj.equals(V)) {
-//                    commonAncestors.add(V);
-//                }
-//            }
-//        }
-
         return commonAncestors;
     }
 
@@ -161,7 +149,6 @@ public class SAP {
         return commonAncestors;
     }
 
-    // do unit testing of this class
     public static void main(String[] args) {
         testSAP(args[0]);
 //        testParse(args[0]);
@@ -196,22 +183,22 @@ public class SAP {
         Digraph G = new Digraph(in);
         SAP sap = new SAP(G);
         while (!StdIn.isEmpty()) {
-            List<Integer> V = new LinkedList<>();
+//            List<Integer> V = new LinkedList<>();
             int v = StdIn.readInt();
-            V.add(v);
-            v = StdIn.readInt();
-            V.add(v);
+//            V.add(v);
 //            v = StdIn.readInt();
 //            V.add(v);
-            List<Integer> W = new LinkedList<>();
+//            v = StdIn.readInt();
+//            V.add(v);
+//            List<Integer> W = new LinkedList<>();
             int w = StdIn.readInt();
-            W.add(w);
-            w = StdIn.readInt();
-            W.add(w);
+//            W.add(w);
 //            w = StdIn.readInt();
 //            W.add(w);
-            int length = sap.length(V, W);
-            int ancestor = sap.ancestor(V, W);
+//            w = StdIn.readInt();
+//            W.add(w);
+            int length = sap.length(v, w);
+            int ancestor = sap.ancestor(v, w);
             StdOut.printf("length = %d, ancestor = %d\n", length, ancestor);
         }
     }

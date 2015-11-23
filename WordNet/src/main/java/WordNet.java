@@ -15,9 +15,15 @@ public class WordNet {
     private SAP localSap;
     private Set<String> searchList;
     private Map<String, Set<Integer>> synsets;
-    
+
+    private WordNet() {
+
+    }
 
     public WordNet(String synsets, String hypernyms) {
+        if (synsets == null || hypernyms == null) {
+            throw new NullPointerException();
+        }
         In in = new In(hypernyms);
         createDigraph(in);
         in.close();
@@ -26,38 +32,51 @@ public class WordNet {
         in.close();
     }
 
-   // returns all WordNet nouns
-   public Iterable<String> nouns() {
-       return searchList;
-   }
+    // returns all WordNet nouns
+    public Iterable<String> nouns() {
+        return searchList;
+    }
 
-   // is the word a WordNet noun?
-   public boolean isNoun(String word) {
-       return searchList.contains(word);
-   }
+    // is the word a WordNet noun?
+    public boolean isNoun(String word) {
+        if (word == null) {
+            throw new NullPointerException();
+        }
+        return searchList.contains(word);
+    }
 
-   // distance between nounA and nounB (defined below)
-   public int distance(String nounA, String nounB) {
-       Set<Integer> aIds = synsets.get(nounA);
-       Set<Integer> bIds = synsets.get(nounB);
-       return localSap.length(aIds, bIds);
-   }
+    // distance between nounA and nounB (defined below)
+    public int distance(String nounA, String nounB) {
+        validateInput(nounA, nounB);
+        Set<Integer> aIds = synsets.get(nounA);
+        Set<Integer> bIds = synsets.get(nounB);
+        return localSap.length(aIds, bIds);
+    }
 
-   // a synset (second field of synsets.txt) that is the common ancestor of nounA and nounB
-   // in a shortest ancestral path (defined below)
-   public String sap(String nounA, String nounB) {
-       Set<Integer> aIds = synsets.get(nounA);
-       Set<Integer> bIds = synsets.get(nounB);
-       String result = null;
-       int ancestorId = localSap.ancestor(aIds, bIds);
-       for (Entry<String, Set<Integer>> e : synsets.entrySet()) {
-           if (e.getValue().contains(ancestorId)) {
-               result = e.getKey();
-           }
-       }
-       return result;
-   }
+    // a synset (second field of synsets.txt) that is the common ancestor of nounA and nounB
+    // in a shortest ancestral path (defined below)
+    public String sap(String nounA, String nounB) {
+        validateInput(nounA, nounB);
+        Set<Integer> aIds = synsets.get(nounA);
+        Set<Integer> bIds = synsets.get(nounB);
+        String result = null;
+        int ancestorId = localSap.ancestor(aIds, bIds);
+        for (Entry<String, Set<Integer>> e : synsets.entrySet()) {
+            if (e.getValue().contains(ancestorId)) {
+                result = e.getKey();
+            }
+        }
+        return result;
+    }
 
+    private void validateInput(String nounA, String nounB) {
+        if (nounA == null || nounB == null) {
+            throw new NullPointerException();
+        }
+        if (!searchList.contains(nounA) || !searchList.contains(nounB)) {
+            throw new IllegalArgumentException();
+        }
+    }
 
     private void createDigraph(In in) {
         List<String> hypernyms = new ArrayList<>();
@@ -65,9 +84,9 @@ public class WordNet {
         while (in.hasNextLine()) {
             String line = in.readLine();
             hypernyms.add(line);
-            int mayBeSize = Integer.parseInt(line.split(",")[0]);
+            int mayBeSize = getMax(line.split(","));
             if (mayBeSize > size) {
-                size = Integer.parseInt(line.split(",")[0]);
+                size = mayBeSize;
             }
         }
         in.close();
@@ -79,6 +98,17 @@ public class WordNet {
             }
         }
         localSap = new SAP(hyps);
+    }
+
+    private int getMax(String[] hypernyms) {
+        int max = 0;
+        for (String item : hypernyms) {
+            int mayBeSize = Integer.parseInt(item);
+            if (mayBeSize > max) {
+                max = mayBeSize;
+            }
+        }
+        return max;
     }
 
     private void createSearchList(In in) {
@@ -101,6 +131,8 @@ public class WordNet {
 
     // do unit testing of this class
     public static void main(String[] args) {
-        WordNet wn = new WordNet(args[0], args[1]);
+        In in = new In(args[0]);
+        WordNet wn = new WordNet();
+        wn.createDigraph(in);
     }
 }
