@@ -15,10 +15,7 @@ public class WordNet {
     private SAP localSap;
     private Set<String> searchList;
     private Map<String, Set<Integer>> synsets;
-
-    private WordNet() {
-
-    }
+    private Map<Integer, String> origin;
 
     public WordNet(String synsets, String hypernyms) {
         if (synsets == null || hypernyms == null) {
@@ -59,14 +56,8 @@ public class WordNet {
         validateInput(nounA, nounB);
         Set<Integer> aIds = synsets.get(nounA);
         Set<Integer> bIds = synsets.get(nounB);
-        String result = null;
         int ancestorId = localSap.ancestor(aIds, bIds);
-        for (Entry<String, Set<Integer>> e : synsets.entrySet()) {
-            if (e.getValue().contains(ancestorId)) {
-                result = e.getKey();
-            }
-        }
-        return result;
+        return origin.get(ancestorId);
     }
 
     private void validateInput(String nounA, String nounB) {
@@ -114,9 +105,12 @@ public class WordNet {
     private void createSearchList(In in) {
         synsets = new HashMap<>();
         searchList = new HashSet<>();
+        origin = new HashMap<>();
         while (in.hasNextLine()) {
-            String[] line = in.readLine().split(",");
+            String origLine = in.readLine();
+            String[] line = origLine.split(",");
             Integer id = Integer.parseInt(line[0]);
+            origin.put(id, origLine.split(",")[1]);
             String[] nouns = line[1].split(" ");
             for (String noun : nouns) {
                 if (synsets.containsKey(noun)) {
@@ -131,8 +125,8 @@ public class WordNet {
 
     // do unit testing of this class
     public static void main(String[] args) {
-        In in = new In(args[0]);
-        WordNet wn = new WordNet();
-        wn.createDigraph(in);
+//        In in = new In(args[0]);
+//        WordNet wn = new WordNet();
+//        wn.createDigraph(in);
     }
 }
