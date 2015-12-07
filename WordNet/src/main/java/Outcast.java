@@ -13,7 +13,7 @@ public class Outcast {
         for (String nounOuter : nouns) {
             for (String nounInner : nouns) {
                 if (nounInner.equals(nounOuter)) {
-                    break;
+                    continue;
                 }
                 int distance = wordNet.distance(nounInner, nounOuter);
                 if (distance > maxLength) {

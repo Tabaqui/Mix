@@ -1,5 +1,6 @@
 
 import edu.princeton.cs.algs4.Digraph;
+import edu.princeton.cs.algs4.DirectedCycle;
 import edu.princeton.cs.algs4.In;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,7 +8,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 public class WordNet {
@@ -21,12 +21,13 @@ public class WordNet {
         if (synsets == null || hypernyms == null) {
             throw new NullPointerException();
         }
-        In in = new In(hypernyms);
-        createDigraph(in);
-        in.close();
-        in = new In(synsets);
+        In in = new In(synsets);
         createSearchList(in);
         in.close();
+        in = new In(hypernyms);
+        createDigraph(in);
+        in.close();
+
     }
 
     // returns all WordNet nouns
@@ -88,7 +89,26 @@ public class WordNet {
                 hyps.addEdge(Integer.parseInt(lineItems[0]), Integer.parseInt(lineItems[i]));
             }
         }
+        validateGraph(hyps);
         localSap = new SAP(hyps);
+
+    }
+
+    private void validateGraph(Digraph d) {
+        int count = 0;
+        DirectedCycle cycle = new DirectedCycle(d);
+        if (cycle.hasCycle()) {
+            throw new IllegalArgumentException();
+        }
+        for (Integer i : origin.keySet()) {
+            if (d.outdegree(i) == 0) {
+                count++;
+            }
+            if (count > 1) {
+                throw new IllegalArgumentException();
+            }
+        }
+
     }
 
     private int getMax(String[] hypernyms) {
@@ -126,7 +146,10 @@ public class WordNet {
     // do unit testing of this class
     public static void main(String[] args) {
 //        In in = new In(args[0]);
-//        WordNet wn = new WordNet();
+//        WordNet wn = new WordNet(args[0], args[1]);
+//        Outcast oc = new Outcast(wn);
+//        String[] source = {"Turing","von_Neumann","Mickey_Mouse"};
+//        System.out.println(oc.outcast(source));
 //        wn.createDigraph(in);
     }
 }
