@@ -197,7 +197,7 @@ public class SeamCarver {
 
     public void removeHorizontalSeam(int[] seam) {
         Picture temp = new Picture(height(), width() - 1);
-        for (int i = 0; i < width(); i++) {
+        for (int i = 0; i < width() - 1; i++) {
             for (int j = 0; j < seam[i]; j++) {
                 temp.set(j, i, new Color(current.get(j, i).getRGB()));
             }
@@ -209,8 +209,8 @@ public class SeamCarver {
     }
 
     public void removeVerticalSeam(int[] seam) {
-        Picture temp = new Picture(height(), width() - 1);
-        for (int i = 0; i < height(); i++) {
+        Picture temp = new Picture(height() - 1, width());
+        for (int i = 0; i < height() - 1; i++) {
             for (int j = 0; j < seam[i]; j++) {
                 temp.set(i, j, new Color(current.get(i, j).getRGB()));
             }
