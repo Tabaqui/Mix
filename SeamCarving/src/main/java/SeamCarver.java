@@ -1,7 +1,6 @@
 
 import edu.princeton.cs.algs4.Picture;
 import java.awt.Color;
-import java.util.Arrays;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -24,14 +23,6 @@ public class SeamCarver {
         this.orig = new Picture(picture);
         this.current = new Picture(this.orig);
         this.distTo = new double[this.orig.height()][this.orig.width()];
-//        for (int i = 0; i < this.orig.width(); i++) {
-//            distTo[0][i] = 1000;
-//            distTo[this.orig.height() - 1][i] = 1000;
-//        }
-//        for (int i = 0; i < this.orig.height(); i++) {
-//            distTo[i][0] = 1000;
-//            distTo[i][this.orig.width() - 1] = 1000;
-//        }
         this.edgeTo = new int[this.orig.height()][this.orig.width()][2];
     }
 
@@ -126,30 +117,7 @@ public class SeamCarver {
         return temp;
     }
 
-//    private double[][] transposeMatrix(double[][] m) {
-//        double[][] temp = new double[m[0].length][m.length];
-//        for (int i = 0; i < m.length; i++) {
-//            for (int j = 0; j < m[0].length; j++) {
-//                temp[j][i] = m[i][j];
-//            }
-//        }
-//        return temp;
-//    }
-//    private static int[][][] transposeMatrix(int[][][] m) {
-//        System.out.println(m[0].length);
-//        System.out.println(m.length);
-//        int[][][] temp = new int[m[0].length][m.length][2];
-//        for (int i = 0; i < m.length; i++) {
-//            for (int j = 0; j < m[0].length; j++) {
-//                temp[j][i][0] = m[i][j][0];
-//                temp[j][i][1] = m[i][j][1];
-//            }
-//        }
-//        return temp;
-//    }
     public int[] findVerticalSeam() {
-
-//        System.out.println(Arrays.deepToString(distTo));
         if (horizontal) {
             horizontal = !horizontal;
             current = transposePicture(current);
@@ -158,7 +126,6 @@ public class SeamCarver {
         }
         for (int i = 0; i < width(); i++) {
             distTo[0][i] = 1000;
-//            distTo[this.orig.height() - 1][i] = 1000;
         }
         return findSeam();
     }
@@ -219,39 +186,6 @@ public class SeamCarver {
             }
         }
         current = temp;
-    }
-
-    public static void main(String[] args) {
-//        int[][][] test = new int[3][2][2];
-//        test[0][0][0] = 0;
-//        test[0][0][1] = 1;
-//        test[0][1][0] = 2;
-//        test[0][1][1] = 3;
-//        test[1][0][0] = 4;
-//        test[1][0][1] = 5;
-//        test[1][1][0] = 6;
-//        test[1][1][1] = 7;
-//        test[2][0][0] = 8;
-//        test[2][0][1] = 9;
-//        test[2][1][0] = 10;
-//        test[2][1][1] = 11;
-//        System.out.println(Arrays.deepToString(test));
-//        test = transposeMatrix(test);
-//        System.out.println(Arrays.deepToString(test));
-
-        testSeam(args);
-    }
-
-    private static void testSeam(String[] args) {
-        Picture picture = new Picture(args[0]);
-//        picture.show();
-        SeamCarver sc = new SeamCarver(picture);
-//
-//        sc.findHorizontalSeam();
-//        sc.current.show();
-//        SCUtility.showEnergy(sc);
-        SCUtility.seamOverlay(picture, false, sc.findVerticalSeam()).show();
-        SCUtility.seamOverlay(picture, true, sc.findHorizontalSeam()).show();
     }
 
 }
