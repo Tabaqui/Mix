@@ -2,7 +2,6 @@
 import edu.princeton.cs.algs4.Picture;
 import edu.princeton.cs.algs4.StdOut;
 import java.awt.Color;
-import java.util.Arrays;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -84,15 +83,20 @@ public class SeamCarver {
 
     public int[] findHorizontalSeam() {
         if (!horizontal) {
-            horizontal = !horizontal;
-            current = transposePicture(current);
-            this.distTo = new double[height()][width()];
-            this.edgeTo = new int[height()][width()][2];
+            distTo = transposeMatrix(distTo);
+//            edgeTo = transposeMatrix(edgeTo);
         }
-        for (int i = 0; i < width(); i++) {
-            distTo[0][i] = 1000;
+        return null;
+    }
+
+    public double[][] transposeMatrix(double[][] m) {
+        double[][] temp = new double[m[0].length][m.length];
+        for (int i = 0; i < m.length; i++) {
+            for (int j = 0; j < m[0].length; j++) {
+                temp[j][i] = m[i][j];
+            }
         }
-        return findSeam();
+        return temp;
     }
 
     private int[] edges(int col, int row) {
@@ -174,39 +178,6 @@ public class SeamCarver {
     }
 
     public void removeHorizontalSeam(int[] seam) {
-        if (seam == null) {
-            throw new NullPointerException();
-        }
-        if (horizontal) {
-            horizontal = !horizontal;
-            current = transposePicture(current);
-            this.distTo = new double[height()][width()];
-            this.edgeTo = new int[height()][width()][2];
-        }
-        System.out.println(width());
-        if (height() <= 1 || seam.length != width()) {
-            throw new IllegalArgumentException();
-        }
-        int cache = seam[0];
-        for (int i : seam) {
-            if ((i - cache) / 2 > 0) {
-                throw new IllegalArgumentException();
-            }
-            if (i < 0 || i >= height()) {
-                throw new IndexOutOfBoundsException();
-            }
-            cache = i;
-        }
-        Picture temp = new Picture(width(), height() - 1);
-        for (int i = 0; i < width(); i++) {
-            for (int j = 0; j < seam[i]; j++) {
-                temp.set(i, j, new Color(current.get(i, j).getRGB()));
-            }
-            for (int j = seam[i] + 1; j < height(); j++) {
-                temp.set(i, j - 1, new Color(current.get(i, j).getRGB()));
-            }
-        }
-        current = temp;
     }
 
     public void removeVerticalSeam(int[] seam) {
