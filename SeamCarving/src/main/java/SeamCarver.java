@@ -245,14 +245,13 @@ public class SeamCarver {
     }
 
     public static void main(String[] args) {
-        Picture p = new Picture(args[0]);
-//        printSeams(p);
-        SeamCarver sc = new SeamCarver(p);
-//        System.out.println(Arrays.toString(sc.findHorizontalSeam()));
-        sc.removeHorizontalSeam(sc.findHorizontalSeam());
-//        printSeams(sc.current);
-        System.out.println(sc.current.width());
-        System.out.println(sc.current.height());
+        int i = 0;
+        print(i++);
+        System.out.println(i);
+    }
+
+    private static void print(int d) {
+        System.out.println(d);
     }
 
 //    public static void printSeams(Picture picture) {
