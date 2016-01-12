@@ -16,7 +16,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class Buffer<T> {
 
-    private T[] cyclicBuffer;
+    private final T[] cyclicBuffer;
     private final Lock lock;
     private final Condition notFull;
     private final Condition notEmpty;
