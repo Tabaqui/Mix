@@ -15,7 +15,10 @@ public class CrimeLab {
     private List<Crime> mCrimes;
 
     public static CrimeLab get(Context context) {
-        return new CrimeLab(context);
+        if (sCrimeLab == null) {
+            sCrimeLab = new CrimeLab(context);
+        }
+        return sCrimeLab;
     }
 
     private CrimeLab(Context context) {
