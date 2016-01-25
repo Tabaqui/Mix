@@ -10,6 +10,9 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -59,7 +62,13 @@ public class CrimeFragment extends Fragment {
         super.onCreate(savedInstanceState);
         UUID crimeId = (UUID) this.getArguments().get(ARG_CRIME_ID);
         mCrime = CrimeLab.get(getActivity()).getCrime(crimeId);
+        setHasOptionsMenu(true);
+    }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.fragment_crime, menu);
     }
 
     @Nullable
@@ -122,6 +131,22 @@ public class CrimeFragment extends Fragment {
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.menu_item_delete_crime) {
+            CrimeLab.get(getActivity()).deleteCrime(mCrime);
+            getActivity().finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        CrimeLab.get(getActivity()).updateCrime(mCrime);
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != Activity.RESULT_OK) {
             return;
@@ -149,6 +174,24 @@ public class CrimeFragment extends Fragment {
             mCrime.setDate(newCalendar.getTime());
             updateDate();
         }
+    }
+
+    private String getCrimeReport() {
+        String solvedString = null;
+        if (mCrime.isSolved()) {
+            solvedString = getString(R.string.crime_report_solved);
+        } else {
+            solvedString = getString(R.string.crime_report_unsolved);
+        }
+        String dateString = CrimeFragment.longDate(mCrime.getDate());
+        String suspect = mCrime.getSuspect();
+        if (suspect == null) {
+            suspect = getString(R.string.crime_report_no_suspect);
+        } else {
+            suspect = getString(R.string.crime_report_suspect, suspect);
+        }
+        String report = getString(R.string.crime_report, mCrime.getTitle(), dateString, solvedString, suspect);
+        return  report;
     }
 
     //    public void returnResult() {
