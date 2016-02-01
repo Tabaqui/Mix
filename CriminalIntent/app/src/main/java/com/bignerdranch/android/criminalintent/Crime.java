@@ -13,6 +13,7 @@ public class Crime {
     private Date mDate;
     private boolean mSolved;
     private String mSuspect;
+    private String mContact;
 
     public Crime() {
         this(UUID.randomUUID());
@@ -56,6 +57,18 @@ public class Crime {
     }
 
     public void setSuspect(String suspect) {
-        mSuspect = suspect;
+        this.mSuspect = suspect;
+    }
+
+    public String getContact() {
+        return mContact;
+    }
+
+    public void setContact(String contact) {
+        this.mContact = contact;
+    }
+
+    public String getPhotoFileName() {
+        return "IMG_" + getId().toString() + ".jpg";
     }
 }
