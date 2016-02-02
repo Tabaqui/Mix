@@ -17,5 +17,9 @@ public class CrimeListActivity extends SingleFragmentActivity {
         super.onCreate(savedInstanceState);
     }
 
+    @Override
+    protected int getLayoutResId() {
+        return R.layout.activity_twopane;
+    }
 
 }
