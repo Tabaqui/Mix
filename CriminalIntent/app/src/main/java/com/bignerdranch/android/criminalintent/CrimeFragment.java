@@ -1,6 +1,7 @@
 package com.bignerdranch.android.criminalintent;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -61,6 +62,7 @@ public class CrimeFragment extends Fragment {
     private Button mCallButton;
     private ImageButton mPhotoButton;
     private ImageView mPhotoView;
+    private Callbacks mCallbacks;
 
     public static String longDate(Date date) {
         return DateFormat.format("EEEE, MMM dd, yyyy", date).toString();
@@ -76,6 +78,10 @@ public class CrimeFragment extends Fragment {
         CrimeFragment fragment = new CrimeFragment();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    public interface Callbacks {
+        void onCrimeUpdated(Crime crime);
     }
 
     @Override
@@ -107,6 +113,7 @@ public class CrimeFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 mCrime.setTitle(s.toString());
+                updateCrime();
             }
 
             @Override
@@ -142,6 +149,7 @@ public class CrimeFragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 mCrime.setSolved(isChecked);
+                updateCrime();
             }
         });
         mReportButton = (Button) v.findViewById(R.id.crime_report);
@@ -224,6 +232,18 @@ public class CrimeFragment extends Fragment {
         return v;
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mCallbacks = (Callbacks) context;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallbacks = null;
+    }
+
     private void updateDate() {
         mDateButton.setText(CrimeFragment.longDate(mCrime.getDate()));
         mTimeButton.setText(CrimeFragment.time(mCrime.getDate()));
@@ -259,6 +279,7 @@ public class CrimeFragment extends Fragment {
             newCalendar.set(Calendar.HOUR, oldCalendar.get(Calendar.HOUR));
             newCalendar.set(Calendar.MINUTE, oldCalendar.get(Calendar.MINUTE));
             mCrime.setDate(newCalendar.getTime());
+            updateCrime();
             updateDate();
         }
         if (requestCode == REQUEST_TIME) {
@@ -271,6 +292,7 @@ public class CrimeFragment extends Fragment {
             newCalendar.set(Calendar.MONTH, oldCalendar.get(Calendar.MONTH));
             newCalendar.set(Calendar.DAY_OF_MONTH, oldCalendar.get(Calendar.DAY_OF_MONTH));
             mCrime.setDate(newCalendar.getTime());
+            updateCrime();
             updateDate();
         }
         if (requestCode == REQUEST_CONTACT && data != null) {
@@ -288,6 +310,7 @@ public class CrimeFragment extends Fragment {
                 c.moveToFirst();
                 String suspect = c.getString(0);
                 mCrime.setSuspect(suspect);
+                updateCrime();
                 mSuspectButton.setText(suspect);
                 String id = c.getString(1);
                 mCrime.setContact(id);
@@ -309,6 +332,7 @@ public class CrimeFragment extends Fragment {
                     c.moveToFirst();
                     String phoneNum = c.getString(0);
                     mCrime.setContact(phoneNum);
+                    updateCrime();
                     mCallButton.setText(phoneNum);
                     mCallButton.setEnabled(true);
                 } finally {
@@ -317,8 +341,14 @@ public class CrimeFragment extends Fragment {
             }
         }
         if (requestCode == REQUEST_PHOTO) {
+            updateCrime();
             updatePhotoView();
         }
+    }
+
+    private void updateCrime() {
+        CrimeLab.get(getActivity()).updateCrime(mCrime);
+        mCallbacks.onCrimeUpdated(mCrime);
     }
 
     private String getCrimeReport() {
@@ -340,12 +370,12 @@ public class CrimeFragment extends Fragment {
     }
 
     private void updatePhotoView() {
-//        if (mPhotoFile == null || !mPhotoFile.exists()) {
-//            mPhotoView.setImageDrawable(null);
-//        } else {
-//            Bitmap bitmap = PictureUtils.getScaledBitmap(mPhotoFile.getPath(), getActivity());
-//            mPhotoView.setImageBitmap(bitmap);
-//        }
+        if (mPhotoFile == null || !mPhotoFile.exists()) {
+            mPhotoView.setImageDrawable(null);
+        } else {
+            Bitmap bitmap = PictureUtils.getScaledBitmap(mPhotoFile.getPath(), getActivity());
+            mPhotoView.setImageBitmap(bitmap);
+        }
     }
 
     //    public void returnResult() {
