@@ -1,5 +1,4 @@
-/BufferSample/nbproject/private/
-/BufferSample/build/
+/BufferSample/
 /FastCollinears/nbproject/private/
 /FastCollinears/build/
 /Colin/nbproject/private/
@@ -12,3 +11,8 @@
 /Trees/build/
 /SeamCarving/target/
 /SeamCarving/nbactions.xml
+/Colin/
+/SolrT/
+/FastCollinears/
+/algs4/
+/1/
