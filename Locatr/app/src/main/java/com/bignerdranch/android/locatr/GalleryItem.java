@@ -21,6 +21,10 @@ public class GalleryItem {
     private Integer mHeight;
     @SerializedName("owner")
     private String mOwner;
+    @SerializedName("latitude")
+    private double mLat;
+    @SerializedName("longitude")
+    private double mLon;
 
     public String getCaption() {
         return mCaption;
@@ -68,6 +72,22 @@ public class GalleryItem {
 
     public void setHeight(Integer height) {
         mHeight = height;
+    }
+
+    public double getLat() {
+        return mLat;
+    }
+
+    public void setLat(double lat) {
+        mLat = lat;
+    }
+
+    public double getLon() {
+        return mLon;
+    }
+
+    public void setLon(double lon) {
+        mLon = lon;
     }
 
     public Uri getPhotoPageUri() {

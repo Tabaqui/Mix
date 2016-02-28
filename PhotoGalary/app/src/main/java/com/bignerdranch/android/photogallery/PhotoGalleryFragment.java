@@ -15,14 +15,11 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Display;
-//import android.view.LayoutInflater;
 import android.view.LayoutInflater;
 import android.view.Menu;
-//import android.view.MenuInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-//import android.view.ViewGroup;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
@@ -38,7 +35,6 @@ public class PhotoGalleryFragment extends VisibleFragment {
     private RecyclerView mPhotoRecyclerView;
     private List<GalleryItem> mItems = new ArrayList<>();
     private ThumbnailDownloader<PhotoHolder> mThumbnailDownloader;
-//    private LruCache<String, Bitmap> cache = new LruCache<>(20);
     private boolean taskComplete = true;
     private int page;
     private int rows;
