@@ -1,27 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical"
-              tools:context=".FromFragment">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/from_fragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".FromFragment">
 
-    <!--<TextView-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:gravity="center"-->
-    <!--android:text="@string/from"-->
-    <!--android:textSize="40sp"-->
-    <!--android:textStyle="bold"/>-->
     <AutoCompleteTextView
-        android:id="@+id/autocomplete"
+        android:id="@+id/from_autocomplete"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/from"
-        android:textSize="30sp"/>
+        android:imeOptions="actionDone"
+        android:textSize="16sp" />
 
-    <FrameLayout
-        android:id="@+id/map_container"
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/from_map_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 </LinearLayout>
