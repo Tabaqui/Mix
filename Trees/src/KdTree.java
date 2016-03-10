@@ -210,6 +210,7 @@ public class KdTree {
     }
 
     public static void main(String[] args) {
+<<<<<<< Updated upstream
         int multiply = 1;
 
         List<Point2D> pointList = new ArrayList<>();
@@ -250,6 +251,16 @@ public class KdTree {
 //            }
 //
 //        }
+=======
+        long N = 400;
+        long sum = 0;
+        for (long i = 1; i <= N * N; i++) {
+            for (long j = 1; j <= i; j++) {
+                sum++;
+            }
+        }
+        System.out.println(sum);
+>>>>>>> Stashed changes
     }
 
 }
