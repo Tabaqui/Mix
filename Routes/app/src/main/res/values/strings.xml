@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Routes</string>
+    <string name="list_item_text">Hello there.</string>
+    <string name="new_schedule_label">Create new...</string>
+    <string name="from">From</string>
+    <string name="to">To</string>
+    <string name="search">Search</string>
+    <string name="action_find_way">Find way</string>
+    <string name="google_app_id">routes-1246</string>
+</resources>
