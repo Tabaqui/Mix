@@ -68,40 +68,50 @@ public class LocationsFetcher {
         return builder.build().toString();
     }
 
-    public List<LatLng> getDirections(LatLng wayFrom, LatLng wayTo) {
+    public RouteResponse getDirections(LatLng wayFrom, LatLng wayTo) {
         String url = buildDirectionsUrl(wayFrom, wayTo);
         return downloadDirections(url);
     }
 
-    private List<LatLng> downloadDirections(String url) {
-        List<LatLng> waypoints = new ArrayList<>();
+    private RouteResponse downloadDirections(String url) {
+        RouteResponse routeResponse = new RouteResponse();
         try {
             String jsonString = getUrlString(url);
             JSONObject jsonBody = new JSONObject(jsonString);
-            waypoints = parseDirection(jsonBody);
+            Route route = new Route();
+            parseDirection(route, jsonBody);
+            if (!route.getPolyline().isEmpty()) {
+                routeResponse.setState(ResponseState.SUCCESS);
+                routeResponse.setRoute(route);
+            } else {
+                routeResponse.setState(ResponseState.EMPTY);
+            }
         } catch (JSONException je) {
             Log.e(TAG, "Failed to parse JSON: " + je);
         } catch (IOException ioe) {
             Log.e(TAG, "Failed to fetch place: " + ioe);
         }
-        return waypoints;
+        return routeResponse;
     }
 
-    private List<LatLng> parseDirection(JSONObject jsonBody) throws JSONException {
+    private void parseDirection(Route route, JSONObject jsonBody) throws JSONException {
         JSONArray jsonRoutes = jsonBody.getJSONArray("routes");
-
         JSONObject jsonRoute = jsonRoutes.getJSONObject(0);
-
-
         JSONArray jsonLegs = jsonRoute.getJSONArray("legs");
         JSONObject jsonLeg = jsonLegs.getJSONObject(0);
+        JSONObject jsonDistance = jsonLeg.getJSONObject("distance");
+        route.setDistance(jsonDistance.getString("text"));
+        JSONObject jsonDuration = jsonLeg.getJSONObject("duration");
+        route.setDuration(jsonDuration.getString("text"));
         JSONArray jsonSteps = jsonLeg.getJSONArray("steps");
-        List<LatLng> points = new ArrayList<>();
+        route.setStartAddress(jsonLeg.getString("start_address"));
+        route.setEndAddress(jsonLeg.getString("end_address"));
         for (int i = 0; i < jsonSteps.length(); i++) {
             String polyline = jsonSteps.getJSONObject(i).getJSONObject("polyline").getString("points");
-            points.addAll(decodePoly(polyline));
+            for (LatLng point : decodePoly(polyline)) {
+                route.addPoint(point);
+            }
         }
-        return points;
     }
 
     private List<LatLng> decodePoly(String encoded) {

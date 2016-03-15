@@ -7,4 +7,7 @@
     <string name="search">Search</string>
     <string name="action_find_way">Find way</string>
     <string name="google_app_id">routes-1246</string>
+    <string name="pain">Pain!</string>
+    <string name="connection_failed">Internet connection is unavailable.</string>
+    <string name="route_failed">Route could not be built.</string>
 </resources>

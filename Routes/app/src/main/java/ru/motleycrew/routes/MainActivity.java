@@ -2,6 +2,7 @@ package ru.motleycrew.routes;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -14,6 +15,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +50,9 @@ public class MainActivity extends AppCompatActivity implements PlaceFragment.UIC
 
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
         mTabLayout.setupWithViewPager(mViewPager);
+        if (!isNetworkAvailableAndConnected()) {
+            Toast.makeText(MainActivity.this, R.string.connection_failed, Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -78,7 +83,13 @@ public class MainActivity extends AppCompatActivity implements PlaceFragment.UIC
         public Fragment getItem(int position) {
             PlaceFragment fragment = mFragments.get(position).getFragment();
             if (fragment == null) {
-                fragment = PlaceFragment.getInstance();
+                String name;
+                if (position == 0) {
+                    name = "From";
+                } else {
+                    name = "To";
+                }
+                fragment = PlaceFragment.getInstance(name);
                 mFragments.get(position).setFragment(fragment);
                 if (position == 0) {
                     mFromFragment = fragment;
@@ -117,40 +128,47 @@ public class MainActivity extends AppCompatActivity implements PlaceFragment.UIC
         }
     }
 
-        @Override
-        public boolean onCreateOptionsMenu(Menu menu) {
-            getMenuInflater().inflate(R.menu.menu, menu);
-            MenuItem item = menu.findItem(R.id.menu_find_way);
-            item.setEnabled(pointsReady());
-            item.getIcon().setAlpha(pointsReady() ? 255 : 55);
-            return true;
-        }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        MenuItem item = menu.findItem(R.id.menu_find_way);
+        item.setEnabled(pointsReady());
+        item.getIcon().setAlpha(pointsReady() ? 255 : 55);
+        return true;
+    }
 
-        @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.menu_find_way:
-                    Intent i = WayActivity.newIntent(this,
-                            mFromFragment.getWayPoint(),
-                            mToFragment.getWayPoint());
-                    startActivity(i);
-                    return true;
-                default:
-                    return super.onOptionsItemSelected(item);
-            }
-        }
-
-        @Override
-        public void update() {
-            invalidateOptionsMenu();
-        }
-
-        private boolean pointsReady() {
-
-            if (mFromFragment == null || mToFragment == null) {
-                return false;
-            } else {
-                return mFromFragment.getWayPoint() != null && mToFragment.getWayPoint() != null;
-            }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_find_way:
+                Intent i = WayActivity.newIntent(this,
+                        mFromFragment.getWayPoint(),
+                        mToFragment.getWayPoint());
+                startActivity(i);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
+
+    @Override
+    public void update() {
+        invalidateOptionsMenu();
+    }
+
+    private boolean pointsReady() {
+
+        if (mFromFragment == null || mToFragment == null) {
+            return false;
+        } else {
+            return mFromFragment.getWayPoint() != null && mToFragment.getWayPoint() != null;
+        }
+    }
+
+    private boolean isNetworkAvailableAndConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        boolean isNetworkAvailable = cm.getActiveNetworkInfo() != null;
+        boolean isNetworkConnected = isNetworkAvailable && cm.getActiveNetworkInfo().isConnected();
+        return isNetworkConnected;
+    }
+}

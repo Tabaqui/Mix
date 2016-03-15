@@ -7,6 +7,9 @@ import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.AttributeSet;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -16,9 +19,11 @@ import java.util.List;
 /**
  * Created by Vas on 05.03.16.
  */
-public class WayActivity extends AppCompatActivity {
+public class WayActivity extends AppCompatActivity implements WayFragment.MapOverlayCallback {
 
     private static final String EXTRA_WAY_POINT = "ru.motleycrew.routes.way_point";
+
+    private TextView mInfoText;
 
     public static Intent newIntent(Context context, LatLng pointFrom, LatLng pointTo) {
         Intent i = new Intent(context, WayActivity.class);
@@ -42,5 +47,14 @@ public class WayActivity extends AppCompatActivity {
                     .add(R.id.map_container, f)
                     .commit();
         }
+
+        mInfoText = (TextView) findViewById(R.id.map_overlay);
+
     }
+
+    @Override
+    public void update(Route route) {
+        mInfoText.setText(route.createReport());
+    }
+
 }

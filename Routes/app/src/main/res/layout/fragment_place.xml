@@ -11,9 +11,9 @@
         android:id="@+id/address"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="4dp"
-        android:drawableLeft="@mipmap/ic_add_location_white_18dp"
-        android:drawableStart="@mipmap/ic_add_location_white_18dp"
+        android:layout_margin="0dp"
+        android:background="@color/colorPrimary"
+        android:textColor="@color/colorAccent"
         android:textSize="16sp"/>
 
     <com.google.android.gms.maps.MapView

@@ -10,8 +10,14 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+//        resConfigs "en", "ru"
+//        resConfigs "nodpi", "hdpi", "xhdpi", "xxhdpi", "xxxhdpi"
     }
     buildTypes {
+        debug {
+            ext.enableCrashlytics = false
+            debuggable true
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -25,7 +31,4 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.google.android.gms:play-services:8.4.0'
     compile 'com.google.android.gms:play-services-maps:8.4.0'
-
-//    doc 'com.google.android.gms:play-services:8.4.0:sources'
-//    doc 'com.google.android.gms:play-services-maps:8.4.0:sources'
 }

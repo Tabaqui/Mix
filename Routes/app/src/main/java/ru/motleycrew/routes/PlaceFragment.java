@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -43,6 +44,7 @@ public class PlaceFragment extends Fragment {
     private static final String MY_POINT_STATE = "mMyPoint";
     private static final String BUTTON_STATE = "buttonState";
     private static final int REQUEST_CODE_AUTOCOMPLETE = 1;
+    private static final String ARG_POINT_NAME = "pointName";
 
     private LatLng mMyPoint;
     private LatLng mWayPoint;
@@ -51,25 +53,35 @@ public class PlaceFragment extends Fragment {
     private MapView mMapView;
     private GoogleMap mMap;
     private UICallback mUiUpdater;
+    private String mPointName;
 
-    public static final PlaceFragment getInstance() {
-        return new PlaceFragment();
+    public static final PlaceFragment getInstance(String pointName) {
+        PlaceFragment fragment = new PlaceFragment();
+
+        Bundle args = new Bundle();
+        args.putString(ARG_POINT_NAME, pointName);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mPointName = getArguments().getString(ARG_POINT_NAME);
         mClient = new GoogleApiClient.Builder(getActivity())
                 .addApi(LocationServices.API)
                 .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
                     @Override
                     public void onConnected(Bundle bundle) {
+                        Log.d(TAG, "On connected called");
+                        Log.d(TAG, "" + mClient.isConnecting());
+                        Log.d(TAG, "" + mClient.isConnected());
                         findMe();
                     }
 
                     @Override
                     public void onConnectionSuspended(int i) {
-
+                        Log.d(TAG, "On suspended called");
                     }
                 })
                 .build();
@@ -110,7 +122,9 @@ public class PlaceFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        Log.d(TAG, "Call connect");
         mClient.connect();
+        Log.d(TAG, "Connect have been called");
     }
 
     @Override
@@ -159,7 +173,9 @@ public class PlaceFragment extends Fragment {
         }
         mWayPoint = savedInstanceState.getParcelable(WAY_POINT_STATE);
         mMyPoint = savedInstanceState.getParcelable(MY_POINT_STATE);
-        mButton.setText(savedInstanceState.getString(BUTTON_STATE));
+        if (savedInstanceState.getString(BUTTON_STATE) != null) {
+            mButton.setText(savedInstanceState.getString(BUTTON_STATE));
+        }
     }
 
     @Override
@@ -189,6 +205,7 @@ public class PlaceFragment extends Fragment {
         });
 
         mButton = (Button) view.findViewById(R.id.address);
+        mButton.setText("...");
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -277,7 +294,10 @@ public class PlaceFragment extends Fragment {
     private void addWayMarker() {
         MarkerOptions wayMarker = new MarkerOptions();
         wayMarker.position(mWayPoint);
+        wayMarker.title(mPointName);
         mMap.addMarker(wayMarker);
     }
+
+
 
 }
