@@ -21,6 +21,7 @@ import java.util.Date;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = "MainActivityTag";
+    private static final int TIMEOUT_MILLIS = 250;
 
     private TextView mTextView;
     private Button mButton;
@@ -43,9 +44,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (v.getId() != R.id.generate_button || mTextView.getText() == null || mTextView.getText().length() == 0) {
             return;
         }
-//        while (mEncoded++ < 4) {
-            encode(mTextView.getText().toString() + String.valueOf(new Date().getTime()), getX(), getY());
-//        }
+        Date datePart = new Date();
+        while (mEncoded < 4) {
+            Log.d(TAG, "Date part is " + datePart.getTime() + mEncoded * TIMEOUT_MILLIS);
+            encode(mTextView.getText().toString() + String.valueOf(datePart.getTime() + mEncoded * TIMEOUT_MILLIS), getX(), getY());
+            mEncoded++;
+        }
         mImageView.setImageBitmap(mBitmap);
     }
 
@@ -56,9 +60,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         QRCodeWriter writer = new QRCodeWriter();
         try {
             BitMatrix matrix = writer.encode(source, BarcodeFormat.QR_CODE, 100, 100);
-
-            for (int i = 0; x < matrix.getWidth(); i++) {
-                for (int j = 0; y < matrix.getHeight(); j++) {
+            for (int i = 0; i < matrix.getWidth(); i++) {
+                for (int j = 0; j < matrix.getHeight(); j++) {
                     int color = matrix.get(i, j) ? Color.BLACK : Color.WHITE;
                     mBitmap.setPixel(x + i, y + j, color);
                 }
@@ -70,21 +73,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private int getX() {
-        switch (mEncoded) {
-            case 0 : return 0;
-            case 2 : return 0;
-            case 1 :
-            case 3 : return 100;
+        if (mEncoded == 0 || mEncoded == 2) {
+            return 0;
+        }
+        if (mEncoded == 1 || mEncoded == 3) {
+            return 100;
         }
         return -1;
     }
 
     private int getY() {
-        switch (mEncoded) {
-            case 0 : return 0;
-            case 1 : return 0;
-            case 2 :
-            case 3 : return 100;
+        if (mEncoded == 0 || mEncoded == 1) {
+            return 0;
+        }
+        if (mEncoded == 2 || mEncoded == 3) {
+            return 100;
         }
         return -1;
     }
