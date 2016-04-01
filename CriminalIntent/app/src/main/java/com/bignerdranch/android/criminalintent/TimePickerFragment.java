@@ -8,9 +8,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TimePicker;
+
+import com.bignerdranch.android.criminalintent.utis.DateUtil;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -21,6 +24,7 @@ import java.util.GregorianCalendar;
  */
 public class TimePickerFragment extends DialogFragment {
 
+    public static final String TAG = "TimePickerFragment";
     public static final String EXTRA_TIME = "com.bignerdranch.android.criminalintent.time";
 
     private static final String ARG_TIME = "time";
@@ -45,6 +49,7 @@ public class TimePickerFragment extends DialogFragment {
         View v = LayoutInflater.from(getActivity())
                 .inflate(R.layout.dialog_time, null);
         mTimePicker = (TimePicker) v.findViewById(R.id.dilog_time_time_picker);
+        mTimePicker.setIs24HourView(true);
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             mTimePicker.setHour(hour);
             mTimePicker.setMinute(minute);
@@ -68,8 +73,9 @@ public class TimePickerFragment extends DialogFragment {
                             minute = mTimePicker.getCurrentMinute();
                         }
                         Calendar c = new GregorianCalendar();
-                        c.set(Calendar.HOUR, hour);
+                        c.set(Calendar.HOUR_OF_DAY, hour);
                         c.set(Calendar.MINUTE, minute);
+                        Log.d(TAG, DateUtil.timeAndDate(c.getTime()));
                         sendResult(Activity.RESULT_OK, c.getTime());
                     }
                 })
@@ -81,7 +87,7 @@ public class TimePickerFragment extends DialogFragment {
             return;
         }
         Intent intent = new Intent();
-        intent.putExtra(EXTRA_TIME, date);
+        intent.putExtra(EXTRA_TIME, date.getTime());
         getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, intent);
     }
 }
