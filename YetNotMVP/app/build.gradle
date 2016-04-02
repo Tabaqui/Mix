@@ -22,7 +22,7 @@ android {
 
     signingConfigs {
         debug {
-            storeFile file('/Users/User/.android/debug.keystore')
+            storeFile file('C:/Users/User/.android/debug.keystore')
             storePassword 'aeknyy1138'
             keyAlias 'androiddebugkey'
             storePassword 'aeknyy1138'
@@ -38,5 +38,8 @@ android {
 
 dependencies {
     compile 'com.android.support:appcompat-v7:23.2.1'
+    compile 'com.android.support:recyclerview-v7:23.2.1'
+    compile 'io.reactivex:rxjava:1.1.2'
+    compile 'io.reactivex:rxandroid:1.1.0'
     compile 'com.facebook.android:facebook-android-sdk:4.10.0'
 }

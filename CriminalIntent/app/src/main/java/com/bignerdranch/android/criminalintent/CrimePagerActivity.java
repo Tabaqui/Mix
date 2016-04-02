@@ -5,11 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+
+import com.bignerdranch.android.criminalintent.database.EventLab;
+import com.bignerdranch.android.criminalintent.model.Event;
 
 import java.util.List;
 import java.util.UUID;
@@ -22,7 +24,7 @@ public class CrimePagerActivity extends AppCompatActivity implements CrimeFragme
     private static final String EXTRA_CRIME_ID = "com.bignerdranch.android.criminalintent.crime_id";
 
     private ViewPager mViewPager;
-    private List<Crime> mCrimes;
+    private List<Event> mEvents;
 
     public static Intent newIntent(Context packageContext, UUID crimeId) {
         Intent intent = new Intent(packageContext, CrimePagerActivity.class);
@@ -31,7 +33,7 @@ public class CrimePagerActivity extends AppCompatActivity implements CrimeFragme
     }
 
     @Override
-    public void onCrimeUpdated(Crime crime) {
+    public void onCrimeUpdated(Event event) {
     }
 
     @Override
@@ -40,22 +42,22 @@ public class CrimePagerActivity extends AppCompatActivity implements CrimeFragme
         setContentView(R.layout.activity_crime_pager);
         mViewPager = (ViewPager) findViewById(R.id.activity_crime_pager_view_pager);
         UUID crimeId = (UUID) getIntent().getSerializableExtra(EXTRA_CRIME_ID);
-        mCrimes = CrimeLab.get(this).getCrimes();
+        mEvents = EventLab.get(this).getEvent();
         FragmentManager fragmentManager = getSupportFragmentManager();
         mViewPager.setAdapter(new FragmentPagerAdapter(fragmentManager) {
             @Override
             public Fragment getItem(int position) {
-                Crime crime = mCrimes.get(position);
-                return CrimeFragment.newInstance(crime.getId());
+                Event event = mEvents.get(position);
+                return CrimeFragment.newInstance(event.getId());
             }
 
             @Override
             public int getCount() {
-                return mCrimes.size();
+                return mEvents.size();
             }
         });
-        for (int i = 0; i < mCrimes.size(); i++) {
-            if (mCrimes.get(i).getId().equals(crimeId)) {
+        for (int i = 0; i < mEvents.size(); i++) {
+            if (mEvents.get(i).getId().equals(crimeId)) {
                 mViewPager.setCurrentItem(i);
                 break;
             }

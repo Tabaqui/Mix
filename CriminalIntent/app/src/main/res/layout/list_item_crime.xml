@@ -17,7 +17,8 @@
         android:id="@+id/list_item_crime_title_text_view"
         android:layout_toLeftOf="@id/list_item_crime_solved_check_box"
         android:padding="4dp"
-        tools:text="Crime Title" />
+        tools:text="Crime Title"
+        android:textStyle="bold"/>
 
     <TextView
         android:layout_width="match_parent"

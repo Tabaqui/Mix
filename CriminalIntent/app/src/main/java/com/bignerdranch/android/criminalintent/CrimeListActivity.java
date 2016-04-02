@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
+import com.bignerdranch.android.criminalintent.model.Event;
+
 /**
  * Created by User on 17.01.2016.
  */
@@ -25,12 +27,12 @@ public class CrimeListActivity extends SingleFragmentActivity
     }
 
     @Override
-    public void onCrimeSelected(Crime crime) {
+    public void onCrimeSelected(Event event) {
         if (findViewById(R.id.detail_fragment_container) == null) {
-            Intent intent = CrimePagerActivity.newIntent(this, crime.getId());
+            Intent intent = CrimePagerActivity.newIntent(this, event.getId());
             startActivity(intent);
         } else {
-            Fragment newDetail = CrimeFragment.newInstance(crime.getId());
+            Fragment newDetail = CrimeFragment.newInstance(event.getId());
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.detail_fragment_container, newDetail)
                     .commit();
@@ -38,7 +40,7 @@ public class CrimeListActivity extends SingleFragmentActivity
     }
 
     @Override
-    public void onCrimeUpdated(Crime crime) {
+    public void onCrimeUpdated(Event event) {
         CrimeListFragment listFragment = (CrimeListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
         listFragment.updateUI();
     }
