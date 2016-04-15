@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <TextView
         style="?android:listSeparatorTextViewStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
-        android:text="@string/crime_title_label"/>
+        android:text="@string/crime_title_label" />
 
     <EditText
         android:id="@+id/crime_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
-        android:hint="@string/crime_title_hint"/>
+        android:hint="@string/crime_title_hint" />
 
     <CheckBox
         android:id="@+id/crime_solved"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
-        android:text="@string/crime_approved_label"/>
+        android:text="@string/crime_approved_label" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -35,14 +35,14 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
-            android:layout_weight="4"/>
+            android:layout_weight="4" />
 
         <Button
             android:id="@+id/crime_time"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
-            android:layout_weight="2"/>
+            android:layout_weight="2" />
     </LinearLayout>
 
     <TextView
@@ -50,22 +50,34 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
-        android:text="@string/crime_details_label"/>
+        android:text="@string/crime_details_label" />
 
     <EditText
         android:id="@+id/event_details_text"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
         android:layout_margin="4dp"
+        android:layout_weight="1"
         android:gravity="top"
-        android:hint="@string/event_details_hint"/>
+        android:hint="@string/event_details_hint" />
 
     <Button
         android:id="@+id/bt_choose_users"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
-        android:text="@string/choose_user_contact"/>
+        android:text="@string/choose_user_contact" />
+
+    <Button
+        android:id="@+id/bt_service"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Message received" />
+
+    <Button
+        android:id="@+id/bt_send_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Message send" />
 
 </LinearLayout>

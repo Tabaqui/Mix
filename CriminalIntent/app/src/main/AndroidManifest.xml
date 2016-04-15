@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.bignerdranch.android.criminalintent">
+    package="ru.motleycrew">
+
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="ru.motleycrew.notyreciever.permission.C2D_MESSAGE" />
 
     <application
         android:allowBackup="true"
@@ -8,23 +16,45 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".CrimeListActivity">
+        <activity android:name=".presentation.presenter.CrimeListActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".CrimePagerActivity"
+            android:name=".presentation.presenter.CrimePagerActivity"
             android:label="@string/app_name"
-            android:parentActivityName=".CrimeListActivity"></activity>
+            android:parentActivityName=".presentation.presenter.CrimeListActivity" />
 
-        <activity android:name=".UserListActivity"></activity>
+        <activity android:name=".presentation.presenter.UserListActivity" />
+
+        <receiver
+            android:name="com.google.android.gms.gcm.GcmReceiver"
+            android:exported="true"
+            android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <category android:name="ru.motleycrew.notyreciever" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name=".presentation.service.GcmBroadcastReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".presentation.service.GcmIntentService"
+            android:exported="false" />
+
+        <service android:name=".presentation.service.MessageFetcher" />
+
     </application>
 
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
-    <uses-permission
-        android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <user-feature
         android:name="android.hardware.camera"

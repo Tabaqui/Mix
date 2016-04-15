@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Sp-rest.iml" filepath="$PROJECT_DIR$/.idea/modules/Sp-rest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Sp-rest_main.iml" filepath="$PROJECT_DIR$/.idea/modules/Sp-rest_main.iml" group="Sp-rest" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Sp-rest_test.iml" filepath="$PROJECT_DIR$/.idea/modules/Sp-rest_test.iml" group="Sp-rest" />
+    </modules>
+  </component>
+</project>

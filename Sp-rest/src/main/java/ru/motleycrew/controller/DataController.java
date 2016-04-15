@@ -29,8 +29,9 @@ public class DataController extends ExceptionHandlerController {
     private DataService dataService;
 
     @RequestMapping(value = "/persist", method = RequestMethod.POST)
-
-    public @ResponseBody Map<String, Object> persist(@RequestParam("data") String data) throws RestException {
+    public
+    @ResponseBody
+    Map<String, Object> persist(@RequestParam("data") String data) throws RestException {
         try {
             if (data == null || data.equals("")) {
                 return Ajax.emptyResponce();
