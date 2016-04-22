@@ -1,36 +1,31 @@
 package ru.motleycrew.entity;
 
 import org.hibernate.annotations.DynamicUpdate;
-import ru.motleycrew.controller.RestUser;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.List;
 import java.util.UUID;
 
 /**
- * Created by RestUser on 14.04.2016.
+ * Created by IncomingUser on 14.04.2016.
  */
 @Entity
 @Table(name = "test_user")
 @DynamicUpdate
-public class User {
+public class User implements Serializable{
 
     @Id
     private String id;
-    private String name;
-    private String contact;
-    private String email;
-    private String deviceId;
+//    private String name;
+//    private String contact;
+    @Column(name = "email")
+    private String login;
+    private String token;
+    private String hash;
 
-    public static final User newUser(RestUser user) {
-        User messageUser = new User();
-        messageUser.setContact(user.getContact());
-        messageUser.setDeviceId(user.getDeviceId());
-        messageUser.setEmail(user.getMail());
-        messageUser.setName(user.getName());
-        return messageUser;
-    }
+//    @ManyToMany(mappedBy = "users")
+//    private List<Data> data;
 
     public User() {
         this.id = UUID.randomUUID().toString();
@@ -61,35 +56,52 @@ public class User {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+//    public String getName() {
+//        return name;
+//    }
+//
+//    public void setName(String name) {
+//        this.name = name;
+//    }
+//
+//    public String getContact() {
+//        return contact;
+//    }
+//
+//    public void setContact(String contact) {
+//        this.contact = contact;
+//    }
+
+
+//    public List<Data> getData() {
+//        return data;
+//    }
+//
+//    public void setData(List<Data> data) {
+//        this.data = data;
+//    }
+
+    public String getLogin() {
+        return login;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setLogin(String login) {
+        this.login = login;
     }
 
-    public String getContact() {
-        return contact;
+    public String getToken() {
+        return token;
     }
 
-    public void setContact(String contact) {
-        this.contact = contact;
+    public void setToken(String token) {
+        this.token = token;
     }
 
-    public String getEmail() {
-        return email;
+    public String getHash() {
+        return hash;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getDeviceId() {
-        return deviceId;
-    }
-
-    public void setDeviceId(String deviceId) {
-        this.deviceId = deviceId;
+    public void setHash(String hash) {
+        this.hash = hash;
     }
 }

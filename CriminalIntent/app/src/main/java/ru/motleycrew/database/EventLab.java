@@ -39,6 +39,7 @@ public class EventLab {
         return sEventLab;
     }
 
+
     private static ContentValues getContentValues(Event event) {
         ContentValues values = new ContentValues();
         values.put(EventTable.Cols.UUID, event.getId().toString());
@@ -65,7 +66,7 @@ public class EventLab {
         return values;
     }
 
-    private EventLab(Context context) {
+    public EventLab(Context context) {
         mContext = context;
         mDataBase = new EventBaseHelper(mContext).getWritableDatabase();
 //        mCrimes = new ArrayList<>();
@@ -165,9 +166,9 @@ public class EventLab {
 
     public List<Participant> getParticipants(String eventId) {
         List<Participant> participants = new ArrayList<>();
-        ParticipantCursorWrapper cursor = queryParticipants(JoinTable.Cols.UUID + " = ?",
-                new String[]{eventId},
-                JOIN);
+        ParticipantCursorWrapper cursor = queryParticipants(eventId == null ? null : JoinTable.Cols.UUID + " = ?",
+                eventId == null ? null : new String[]{eventId},
+                eventId == null ? NOT_JOIN : JOIN);
         try {
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {

@@ -1,5 +1,6 @@
 package ru.motleycrew.model;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.UUID;
@@ -10,20 +11,22 @@ import java.util.UUID;
 public class Participant {
 
     @SerializedName("messageId")
+    @Expose
     private UUID mId;
     @SerializedName("name")
+    @Expose
     private String mName;
     @SerializedName("contact")
+    @Expose
     private String mContact;
-    @SerializedName("phone")
+    @SerializedName("mail")
     private String mEmail;
 
-    public Participant(UUID id) {
-        mId = id;
+    public Participant() {
     }
 
     public Participant(String name, String contact) {
-        this(UUID.randomUUID());
+        mId = UUID.randomUUID();
         mContact = contact;
         mName = name;
     }

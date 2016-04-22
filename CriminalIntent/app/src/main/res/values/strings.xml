@@ -30,5 +30,8 @@
     <string name="send_notify">Notify all</string>
     <string name="error_contact_manager">Failed to find contact manager</string>
 
+    <string name="login_lbl">Login</string>
+    <string name="register_lbl">Register</string>
+
     <string name="default_sender_id">719656065325</string>
 </resources>

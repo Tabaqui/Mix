@@ -9,8 +9,13 @@ buildscript {
     }
 }
 
+plugins {
+    id "at.comm_unity.gradle.plugins.jpamodelgen" version "1.1.1"
+}
+
 apply plugin: 'java'
 apply plugin: 'spring-boot'
+apply plugin: 'at.comm_unity.gradle.plugins.jpamodelgen'
 
 jar {
     baseName = 'gs-rest-service'
@@ -19,6 +24,7 @@ jar {
 
 repositories {
     mavenCentral()
+    maven {url "https://repository.jboss.org/nexus/content/repositories/release"}
 }
 
 sourceCompatibility = 1.8
@@ -44,6 +50,17 @@ dependencies {
     compile 'com.google.code.gson:gson:2.6.2'
 }
 
+//sourceSets {
+//    generated {
+//        java.srcDir "src/main/java/generated"
+//    }
+//}
+
+jpaModelgen {
+    library = "org.hibernate:hibernate-jpamodelgen:5.1.0.Final"
+    jpaModelgenSourcesDir = "src/main/java/generated"
+}
+
 task wrapper(type: Wrapper) {
     gradleVersion = '2.12'
 }
@@ -51,3 +68,5 @@ task wrapper(type: Wrapper) {
 bootRun {
     addResources = true
 }
+
+compileJava.options.compilerArgs += ["-proc:none"]

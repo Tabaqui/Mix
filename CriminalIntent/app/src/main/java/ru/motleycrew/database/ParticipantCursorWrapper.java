@@ -21,7 +21,8 @@ public class ParticipantCursorWrapper extends CursorWrapper {
         String uuidString = getString(getColumnIndex(ParticipantTable.Cols.UUID));
         String name = getString(getColumnIndex(ParticipantTable.Cols.NAME));
         String contact = getString(getColumnIndex(ParticipantTable.Cols.CONTACT));
-        Participant p = new Participant(UUID.fromString(uuidString));
+        Participant p = new Participant();
+        p.setId(UUID.fromString(uuidString));
         p.setName(name);
         p.setContact(contact);
         return p;

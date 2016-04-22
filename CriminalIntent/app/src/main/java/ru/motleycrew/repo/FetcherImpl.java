@@ -16,6 +16,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import ru.motleycrew.database.EventLab;
 import ru.motleycrew.model.Credentials;
 import ru.motleycrew.model.Event;
+import ru.motleycrew.network.NotyRestService;
 import rx.Observable;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
@@ -52,10 +53,34 @@ public class FetcherImpl implements Fetcher {
                 .build();
     }
 
+    public FetcherImpl(EventLab lab) {
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient client = new OkHttpClient.Builder()
+                .addInterceptor(interceptor)
+                .readTimeout(20, TimeUnit.SECONDS)
+                .build();
+
+        eventLab = lab;
+
+        Gson gson = new GsonBuilder()
+                .setDateFormat("yyyy.MM.dd'T'HH:mm:ssZ")
+                .create();
+
+        retrofit = new Retrofit.Builder()
+                .baseUrl("http://192.168.1.105:8080")
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .client(client)
+                .build();
+    }
+
+
+
     @Override
-    public void downloadMessage(Event refEvent) {
+    public void downloadMessage(String id) {
         NotyRestService service = retrofit.create(NotyRestService.class);
-        Observable<Event> text = service.getCurrent(refEvent.getId());
+        Observable<Event> text = service.getMessage(id);
 
         text.subscribeOn(Schedulers.io())
                 .subscribe(new Action1<Event>() {
@@ -77,6 +102,7 @@ public class FetcherImpl implements Fetcher {
         response.subscribeOn(Schedulers.io())
                 .subscribe(new Action1<Object>() {
                     public void call(Object resp) {
+                        // TODO: Don't know what is this.
                         Log.d(TAG, "message send");
                         Log.d(TAG, resp.toString());
                     }
@@ -90,9 +116,31 @@ public class FetcherImpl implements Fetcher {
         response.subscribeOn(Schedulers.io())
                 .subscribe(new Action1<Object>() {
                     public void call(Object resp) {
+                        // TODO: Save own hash
                         Log.d(TAG, "registered");
                         Log.d(TAG, resp.toString());
                     }
                 });
     }
+
+    @Override
+    public void register(String cred) {
+
+    }
+
+
+//    public List<String> getTokens(List<String> logins) {
+//        NotyRestService service = retrofit.create(NotyRestService.class);
+//        Observable<Pair<String, String>> responce = service.getTokens(logins);
+//
+//        responce.subscribeOn((Schedulers.io()))
+//                .subscribe(new Action1<Pair<String, String>>() {
+//                    @Override
+//                    public void call(Pair<String, String> strings) {
+//                        for (Participant p : eventLab.getParticipants(null)) {
+//
+//                        }
+//                    }
+//                })
+//    }
 }

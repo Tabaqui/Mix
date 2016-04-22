@@ -50,7 +50,7 @@ public class Client {
             String iovation = p.getHtmlElementById("login_iovation").getAttribute("value");
             UserData userData = new UserData(iovation, token);
             return userData;
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             System.out.println("Error get login page");
             return null;
         }

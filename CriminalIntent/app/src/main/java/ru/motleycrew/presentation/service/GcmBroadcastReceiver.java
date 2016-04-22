@@ -1,5 +1,6 @@
 package ru.motleycrew.presentation.service;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.gms.gcm.GcmListenerService;
@@ -16,9 +17,13 @@ public class GcmBroadcastReceiver extends GcmListenerService {
         super.onMessageReceived(from, data);
         if (from.equals(GCM_TOPIC)) {
             String messageId = data.getString("message");
-
+            Intent i = MessageFetcher.newInstance(getApplicationContext(), messageId);
+            startService(i);
         } else {
             System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            String messageId = data.getString("message");
+            Intent i = MessageFetcher.newInstance(getApplicationContext(), messageId);
+            startService(i);
         }
     }
 }

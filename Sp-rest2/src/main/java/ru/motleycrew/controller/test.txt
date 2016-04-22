@@ -1,7 +1,0 @@
-{
-  "title":"Test title",
-  "date":"2016.04.13T15:50:28+04:00",
-  "approved":"true",
-  "text":"Meeting failed. Return to your home mates",
-  "id":"test_message_id_1"
-}

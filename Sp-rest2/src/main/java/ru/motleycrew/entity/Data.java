@@ -2,15 +2,9 @@ package ru.motleycrew.entity;
 
 
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.ManyToAny;
 import org.hibernate.annotations.Type;
-import ru.motleycrew.controller.RestMessage;
-import ru.motleycrew.controller.RestUser;
-
 
 import javax.persistence.*;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -26,8 +20,8 @@ public class Data implements DomainObject {
 
     @Id
     private String id;
-    @Column(name = "message_id")
-    private String messageId;
+//    @Column(name = "message_id")
+//    private String messageId;
     private String title;
     @Column(name = "created_at")
     @Type(type = "timestamp")
@@ -40,32 +34,14 @@ public class Data implements DomainObject {
             inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"))
     private List<User> users;
 
-    public static final Data newData(RestMessage message) {
-        Data data = new Data();
-        data.setText(message.getTitle());
-        try {
-            data.setDate(new SimpleDateFormat("yyyy.MM.dd'T'HH:mm:ssZ").parse(message.getDate()));
-        } catch (ParseException ex) {
-            throw new RuntimeException("Parse Message date format exception");
-        }
-        data.setTitle(message.getTitle());
-        data.setApproved(message.isApproved());
-        data.setMessageId(message.getId());
-        for (RestUser restUser : message.getParticipants()) {
-            User user = User.newUser(restUser);
-            data.getUsers().add(user);
-        }
-        return data;
-    }
-
     public Data() {
         this.id = UUID.randomUUID().toString();
     }
 
-    public Data(String description) {
-        this();
-        this.messageId = description;
-    }
+//    public Data(String description) {
+//        this();
+////        this.messageId = description;
+//    }
 
     public String getId() {
         return id;
@@ -75,13 +51,13 @@ public class Data implements DomainObject {
         this.id = id;
     }
 
-    public String getMessageId() {
-        return messageId;
-    }
+//    public String getMessageId() {
+//        return messageId;
+//    }
 
-    public void setMessageId(String messageId) {
-        this.messageId = messageId;
-    }
+//    public void setMessageId(String messageId) {
+//        this.messageId = messageId;
+//    }
 
     public String getTitle() {
         return title;

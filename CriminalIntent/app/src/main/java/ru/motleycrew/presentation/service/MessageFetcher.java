@@ -30,10 +30,8 @@ public class MessageFetcher extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         String messageId = intent.getStringExtra(EXTRA_MESSAGE_ID);
-        Event incoming = new Event();
-//        incoming.setMessageId(messageId);
         Fetcher fetcher = new FetcherImpl(getApplicationContext());
-        fetcher.downloadMessage(incoming);
+        fetcher.downloadMessage(messageId);
     }
 
 

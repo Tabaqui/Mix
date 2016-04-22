@@ -13,21 +13,28 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
+        android:name=".App"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".presentation.presenter.CrimeListActivity">
+
+        <activity
+            android:name=".presentation.login.LoginActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".presentation.presenter.CrimePagerActivity"
-            android:label="@string/app_name"
-            android:parentActivityName=".presentation.presenter.CrimeListActivity" />
 
-        <activity android:name=".presentation.presenter.UserListActivity" />
+        <activity android:name=".presentation.evens.CrimeListActivity" />
+
+        <activity
+            android:name=".presentation.event.CrimePagerActivity"
+            android:label="@string/app_name"
+            android:parentActivityName=".presentation.evens.CrimeListActivity" />
+
+        <activity android:name=".presentation.users.UserListActivity" />
 
         <receiver
             android:name="com.google.android.gms.gcm.GcmReceiver"
@@ -52,6 +59,8 @@
             android:exported="false" />
 
         <service android:name=".presentation.service.MessageFetcher" />
+
+        <service android:name=".presentation.service.LoginService" />
 
     </application>
 

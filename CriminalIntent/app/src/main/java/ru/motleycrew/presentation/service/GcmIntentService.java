@@ -42,8 +42,8 @@ public class GcmIntentService extends IntentService {
 
     private void sendRegistrationToServer(String token) {
         Fetcher fetcher = new FetcherImpl(getApplicationContext());
-        String deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-        Credentials credentials = new Credentials(token, deviceId , "tabaqui.vn@gmail.com");
+//        String deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        Credentials credentials = new Credentials(token, null , "tabaqui.vn@gmail.com");
         fetcher.updateRegistration(credentials);
     }
 

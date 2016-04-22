@@ -2,6 +2,7 @@ package ru.motleycrew.service;
 
 import org.apache.commons.io.IOUtils;
 import org.json.simple.JSONObject;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,18 +11,20 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * Created by RestUser on 14.04.2016.
+ * Created by IncomingUser on 14.04.2016.
  */
+
+@Service
 public class GcmMessageSender {
 
     private static String API_KEY = "AIzaSyCuIED2SRHQc52oGeKlAc08W2U1ufkHLGo";
 
-    public static void send(UWMessage uwMessage, String target, boolean topic) {
+    public static void send(String message, String target, boolean topic) {
         try {
             // Prepare JSON containing the GCM message content. What to send and where to send.
             JSONObject jGcmData = new JSONObject();
             JSONObject jData = new JSONObject();
-            jData.put("message", uwMessage.getMessageId());
+            jData.put("message", message);
 
             if (topic) {
                 if (target != null) {
@@ -34,7 +37,7 @@ public class GcmMessageSender {
             }
             jGcmData.put("data", jData);
 
-            // Create connection to send GCM UWMessage request.
+            // Create connection to send GCM Message request.
             URL url = new URL("https://android.googleapis.com/gcm/send");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestProperty("Authorization", "key=" + API_KEY);

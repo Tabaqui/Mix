@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * Created by RestUser on 04.04.2016.
+ * Created by IncomingUser on 04.04.2016.
  */
 public class CsrfTokenResponseHeaderBindingFilter extends OncePerRequestFilter {
 

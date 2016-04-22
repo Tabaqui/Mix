@@ -19,6 +19,8 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="Sp-rest_generated" target="1.8" />
+      <module name="Sp-rest_jpaModelgen" target="1.8" />
       <module name="Sp-rest_main" target="1.8" />
       <module name="Sp-rest_test" target="1.8" />
     </bytecodeTargetLevel>

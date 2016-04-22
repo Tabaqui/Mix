@@ -8,7 +8,8 @@ import ru.motleycrew.model.Event;
  */
 public interface Fetcher {
 
-    void downloadMessage(Event event);
+    void downloadMessage(String messageId);
     void pushMessage(Event refEvent);
     void updateRegistration(Credentials credentials);
+    void register(String cred);
 }

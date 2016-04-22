@@ -1,5 +1,6 @@
 package ru.motleycrew.model;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
@@ -12,7 +13,8 @@ import java.util.UUID;
  */
 public class Event {
 
-    @SerializedName("messageId")
+//    @SerializedName("messageId")
+    @Expose
     private String mId;
     @SerializedName("title")
     private String mTitle;
