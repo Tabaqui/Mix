@@ -1,4 +1,4 @@
-package ru.motleycrew.service;
+package ru.motleycrew.utils;
 
 import org.apache.commons.io.IOUtils;
 import org.json.simple.JSONObject;

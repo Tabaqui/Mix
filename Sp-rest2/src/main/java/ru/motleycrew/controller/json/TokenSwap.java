@@ -1,4 +1,4 @@
-package ru.motleycrew.controller;
+package ru.motleycrew.controller.json;
 
 /**
  * Created by User on 20.04.2016.

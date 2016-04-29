@@ -1,4 +1,4 @@
-package ru.motleycrew.presentation.evens;
+package ru.motleycrew.presentation.events;
 
 import android.content.Context;
 import android.content.Intent;
@@ -18,13 +18,17 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 
+import ru.motleycrew.App;
 import ru.motleycrew.R;
 import ru.motleycrew.database.EventLab;
+import ru.motleycrew.di.components.LoginComponent;
 import ru.motleycrew.model.Event;
 import ru.motleycrew.presentation.service.GcmIntentService;
 import ru.motleycrew.utis.DateUtil;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 /**
  * Created by User on 17.01.2016.
@@ -39,6 +43,18 @@ public class CrimeListFragment extends Fragment {
     private boolean mSubtitleVisible;
     private Callbacks mCallbacks;
     private int holderPosition = -1;
+
+    @Inject
+    public EventLab eventLab;
+
+    private LoginComponent component;
+
+    protected void initDI() {
+        component = ((App) getActivity().getApplication())
+                .getAppComponent()
+                .plusLoginComponent();
+        component.inject(this);
+    }
 
     public interface Callbacks {
         void onCrimeSelected(Event event);
@@ -111,6 +127,7 @@ public class CrimeListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        initDI();
         Intent intent = new Intent(getActivity(), GcmIntentService.class);
         getActivity().startService(intent);
     }
@@ -170,7 +187,7 @@ public class CrimeListFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.menu_item_new_crime:
                 Event event = new Event();
-                EventLab.get(getActivity()).addEvent(event);
+                eventLab.addEvent(event);
                 mCallbacks.onCrimeSelected(event);
                 updateUI();
                 return true;
@@ -191,7 +208,6 @@ public class CrimeListFragment extends Fragment {
     }
 
     private void updateSubtitle() {
-        EventLab eventLab = EventLab.get(getActivity());
         int crimeCount = eventLab.getEvent().size();
         String subtitle = getResources().getQuantityString(R.plurals.subtitle_plural, crimeCount, crimeCount);
         if (!mSubtitleVisible) {
@@ -202,25 +218,19 @@ public class CrimeListFragment extends Fragment {
     }
 
     public void updateUI() {
-        EventLab eventLab = EventLab.get(getActivity());
         List<Event> events = eventLab.getEvent();
-//        if (mAdapter == null) {
         mAdapter = new CrimeAdapter(events);
         mCrimeRecyclerView.setAdapter(mAdapter);
         updateListItem();
-//        } else {
-//            mAdapter.setEvents(events);
-//            updateListItem();
-//        }
         updateSubtitle();
     }
 
     private void updateListItem() {
-        if (holderPosition < 0) {
+//        if (holderPosition < 0) {
             mAdapter.notifyDataSetChanged();
-        } else {
-            mAdapter.notifyItemChanged(holderPosition);
-            holderPosition = -1;
-        }
+//        } else {
+//            mAdapter.notifyItemChanged(holderPosition);
+//            holderPosition = -1;
+//        }
     }
 }

@@ -1,4 +1,4 @@
-package ru.motleycrew.di;
+package ru.motleycrew.di.modules;
 
 import android.content.Context;
 
@@ -21,7 +21,8 @@ public class AppModule {
 
     @Provides
     @Singleton
-    Context provideContext() {
+    public Context provideContext() {
         return context;
     }
+
 }

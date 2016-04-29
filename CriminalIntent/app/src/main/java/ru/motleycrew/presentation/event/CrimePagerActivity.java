@@ -12,8 +12,12 @@ import android.support.v7.app.AppCompatActivity;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
+import ru.motleycrew.App;
 import ru.motleycrew.R;
 import ru.motleycrew.database.EventLab;
+import ru.motleycrew.di.components.LoginComponent;
 import ru.motleycrew.model.Event;
 
 /**
@@ -25,6 +29,18 @@ public class CrimePagerActivity extends AppCompatActivity implements CrimeFragme
 
     private ViewPager mViewPager;
     private List<Event> mEvents;
+
+    @Inject
+    EventLab eventLab;
+
+    private LoginComponent component;
+
+    protected void initDI() {
+        component = ((App) getApplication())
+                .getAppComponent()
+                .plusLoginComponent();
+        component.inject(this);
+    }
 
     public static Intent newIntent(Context packageContext, String crimeId) {
         Intent intent = new Intent(packageContext, CrimePagerActivity.class);
@@ -40,9 +56,10 @@ public class CrimePagerActivity extends AppCompatActivity implements CrimeFragme
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_crime_pager);
+        initDI();
         mViewPager = (ViewPager) findViewById(R.id.activity_crime_pager_view_pager);
         String crimeId = (String) getIntent().getSerializableExtra(EXTRA_CRIME_ID);
-        mEvents = EventLab.get(this).getEvent();
+        mEvents = eventLab.getEvent();
         FragmentManager fragmentManager = getSupportFragmentManager();
         mViewPager.setAdapter(new FragmentPagerAdapter(fragmentManager) {
             @Override

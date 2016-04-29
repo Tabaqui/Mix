@@ -34,4 +34,5 @@
     <string name="register_lbl">Register</string>
 
     <string name="default_sender_id">719656065325</string>
+    <string name="google_app_id">719656065325</string>
 </resources>

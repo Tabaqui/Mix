@@ -27,14 +27,17 @@ import android.widget.EditText;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.inject.Inject;
+
+import ru.motleycrew.App;
 import ru.motleycrew.R;
 import ru.motleycrew.database.EventLab;
+import ru.motleycrew.di.components.LoginComponent;
 import ru.motleycrew.model.Event;
 import ru.motleycrew.model.Participant;
 import ru.motleycrew.presentation.users.UserListActivity;
 import ru.motleycrew.presentation.service.MessageFetcher;
 import ru.motleycrew.repo.Fetcher;
-import ru.motleycrew.repo.FetcherImpl;
 import ru.motleycrew.utis.DateUtil;
 
 /**
@@ -60,9 +63,22 @@ public class CrimeFragment extends Fragment {
     private Button mReceivedButton;
     private Button mSendButton;
 
+    @Inject
+    EventLab eventLab;
+    @Inject
+    Fetcher fetcher;
 
     public static String time(Date date) {
         return DateFormat.format("kk:mm", date).toString();
+    }
+
+    private LoginComponent component;
+
+    protected void initDI() {
+        component = ((App) getActivity().getApplication())
+                .getAppComponent()
+                .plusLoginComponent();
+        component.inject(this);
     }
 
     public static CrimeFragment newInstance(String crimeId) {
@@ -80,8 +96,9 @@ public class CrimeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initDI();
         String crimeId = (String) this.getArguments().get(ARG_CRIME_ID);
-        mEvent = EventLab.get(getActivity()).getEvent(crimeId);
+        mEvent = eventLab.getEvent(crimeId);
         setHasOptionsMenu(true);
     }
 
@@ -166,7 +183,7 @@ public class CrimeFragment extends Fragment {
         mChooseUsers.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EventLab.get(getActivity()).updateEvent(mEvent);
+                eventLab.updateEvent(mEvent);
                 Intent i = UserListActivity.newIntent(getActivity(), mEvent.getId());
                 startActivity(i);
             }
@@ -191,7 +208,6 @@ public class CrimeFragment extends Fragment {
                 Participant p = new Participant();
                 p.setEmail("tabaqui.vn@gmail.com");
                 mEvent.addParticipant(p);
-                Fetcher fetcher = new FetcherImpl(getContext());
                 fetcher.pushMessage(mEvent);
             }
         });
@@ -218,7 +234,7 @@ public class CrimeFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_item_delete_crime) {
-            EventLab.get(getActivity()).deleteEvent(mEvent);
+            eventLab.deleteEvent(mEvent);
             getActivity().finish();
             return true;
         }
@@ -228,7 +244,7 @@ public class CrimeFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        EventLab.get(getActivity()).updateEvent(mEvent);
+        eventLab.updateEvent(mEvent);
     }
 
     @Override
@@ -267,7 +283,7 @@ public class CrimeFragment extends Fragment {
     }
 
     private void updateCrime() {
-        EventLab.get(getActivity()).updateEvent(mEvent);
+        eventLab.updateEvent(mEvent);
         mCallbacks.onCrimeUpdated(mEvent);
     }
 

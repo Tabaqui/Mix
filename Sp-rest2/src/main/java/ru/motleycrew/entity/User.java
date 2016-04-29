@@ -13,19 +13,13 @@ import java.util.UUID;
 @Entity
 @Table(name = "test_user")
 @DynamicUpdate
-public class User implements Serializable{
+public class User implements DomainObject{
 
     @Id
     private String id;
-//    private String name;
-//    private String contact;
-    @Column(name = "email")
-    private String login;
+    private String email;
     private String token;
     private String hash;
-
-//    @ManyToMany(mappedBy = "users")
-//    private List<Data> data;
 
     public User() {
         this.id = UUID.randomUUID().toString();
@@ -56,37 +50,12 @@ public class User implements Serializable{
         this.id = id;
     }
 
-//    public String getName() {
-//        return name;
-//    }
-//
-//    public void setName(String name) {
-//        this.name = name;
-//    }
-//
-//    public String getContact() {
-//        return contact;
-//    }
-//
-//    public void setContact(String contact) {
-//        this.contact = contact;
-//    }
-
-
-//    public List<Data> getData() {
-//        return data;
-//    }
-//
-//    public void setData(List<Data> data) {
-//        this.data = data;
-//    }
-
-    public String getLogin() {
-        return login;
+    public String getEmail() {
+        return email;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getToken() {

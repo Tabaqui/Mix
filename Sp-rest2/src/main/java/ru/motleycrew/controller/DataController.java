@@ -1,18 +1,21 @@
 package ru.motleycrew.controller;
 
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.codec.binary.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import ru.motleycrew.config.Credentials;
+import ru.motleycrew.controller.json.IncomingMessage;
+import ru.motleycrew.controller.json.TokenSwap;
 import ru.motleycrew.entity.Data;
+import ru.motleycrew.controller.json.Pair;
 import ru.motleycrew.entity.User;
 import ru.motleycrew.repository.MessageDao;
 import ru.motleycrew.repository.UserDao;
-import ru.motleycrew.service.MessageService;
+import ru.motleycrew.service.MessageServiceImpl;
 import ru.motleycrew.service.SendService;
 import ru.motleycrew.utils.RestException;
 
@@ -39,7 +42,7 @@ public class DataController extends ExceptionHandlerController {
     private SendService sendService;
 
     @Autowired
-    private MessageService messageService;
+    private MessageServiceImpl messageService;
 
     @RequestMapping(value = "/messages", method = RequestMethod.GET)
     public
@@ -84,23 +87,27 @@ public class DataController extends ExceptionHandlerController {
         }
     }
 
-    @RequestMapping(value = "/user/registration", method = RequestMethod.POST)
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
     public
     @ResponseBody
-    Map<String, Object> register(@RequestBody Credentials credentials) throws RestException {
+    Pair<String, String> register(@RequestBody Pair<String, String> credentials) throws RestException {
         try {
-            byte[] login = credentials.getLogin().getBytes("UTF-8");
+            User user = userDao.find(credentials.getFirst());
+            byte[] login = (credentials.getFirst() + credentials.getSecond()).getBytes("UTF-8");
             MessageDigest md = MessageDigest.getInstance("MD5");
             md.update(login);
-            final String result = new String(Hex.encodeHex(md.digest()));
-            User user = new User();
-            user.setToken(credentials.getToken());
-            user.setHash(result);
-            user.setLogin(credentials.getLogin());
-            userDao.create(user);
-            Map<String, Object> b = new HashMap<>();
-            b.put("id", result);
-            return b;
+            final String hash = new String(Hex.encodeHex(md.digest()));
+            if (user == null) {
+                user = new User();
+                user.setHash(hash);
+                user.setEmail(credentials.getFirst());
+                userDao.create(user);
+            }
+            if (user.getHash() == null || !StringUtils.equals(user.getHash(), hash)) {
+                throw new Exception("Invalid user password");
+            }
+            Pair<String, String> result = new Pair<>("hash", hash);
+            return result;
         } catch (Exception ex) {
             throw new RestException(ex);
         }

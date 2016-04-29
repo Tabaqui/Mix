@@ -11,7 +11,14 @@ import com.google.android.gms.iid.InstanceID;
 
 import java.io.IOException;
 
+import javax.inject.Inject;
+
+import ru.motleycrew.App;
+import ru.motleycrew.LocalPreferences;
 import ru.motleycrew.R;
+import ru.motleycrew.database.EventLab;
+import ru.motleycrew.di.components.AppComponent;
+import ru.motleycrew.di.components.GcmComponent;
 import ru.motleycrew.model.Credentials;
 import ru.motleycrew.repo.Fetcher;
 import ru.motleycrew.repo.FetcherImpl;
@@ -23,8 +30,24 @@ public class GcmIntentService extends IntentService {
 
     private static final String TAG = "GcmIntentService";
 
+    @Inject
+    LocalPreferences preferences;
+    @Inject
+    EventLab eventLab;
+    @Inject
+    Fetcher fetcher;
+
     public GcmIntentService() {
         super(TAG);
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        App app = (App) getApplication();
+        AppComponent component = app.getAppComponent();
+        GcmComponent gcmComponent = component.plusGcmComponent();
+        gcmComponent.inject(this);
     }
 
     @Override
@@ -41,14 +64,21 @@ public class GcmIntentService extends IntentService {
     }
 
     private void sendRegistrationToServer(String token) {
-        Fetcher fetcher = new FetcherImpl(getApplicationContext());
-//        String deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-        Credentials credentials = new Credentials(token, null , "tabaqui.vn@gmail.com");
+        Credentials credentials = eventLab.getCredentials();
+        if (credentials != null) {
+            credentials.setToken(token);
+        } else {
+            saveShared(token);
+        }
         fetcher.updateRegistration(credentials);
     }
 
     private void subscribeTopics(String token) throws IOException {
         GcmPubSub pubSub = GcmPubSub.getInstance(this);
         pubSub.subscribe(token, GcmBroadcastReceiver.GCM_TOPIC, null);
+    }
+
+    private void saveShared(String token) {
+        preferences.setStoredToken(token);
     }
 }

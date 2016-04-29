@@ -2,10 +2,12 @@ package ru.motleycrew.repo;
 
 import android.content.Context;
 import android.util.Log;
+import android.util.Pair;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -18,7 +20,10 @@ import ru.motleycrew.model.Credentials;
 import ru.motleycrew.model.Event;
 import ru.motleycrew.network.NotyRestService;
 import rx.Observable;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -31,27 +36,27 @@ public class FetcherImpl implements Fetcher {
     private Retrofit retrofit;
     private EventLab eventLab;
 
-    public FetcherImpl(Context context) {
-        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient client = new OkHttpClient.Builder()
-                .addInterceptor(interceptor)
-                .readTimeout(20, TimeUnit.SECONDS)
-                .build();
-
-        eventLab = EventLab.get(context);
-
-        Gson gson = new GsonBuilder()
-                .setDateFormat("yyyy.MM.dd'T'HH:mm:ssZ")
-                .create();
-
-        retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.1.105:8080")
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .client(client)
-                .build();
-    }
+//    public FetcherImpl(Context context) {
+//        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+//        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+//        OkHttpClient client = new OkHttpClient.Builder()
+//                .addInterceptor(interceptor)
+//                .readTimeout(20, TimeUnit.SECONDS)
+//                .build();
+//
+//        eventLab = EventLab.get(context);
+//
+//        Gson gson = new GsonBuilder()
+//                .setDateFormat("yyyy.MM.dd'T'HH:mm:ssZ")
+//                .create();
+//
+//        retrofit = new Retrofit.Builder()
+//                .baseUrl("http://192.168.1.105:8080")
+//                .addConverterFactory(GsonConverterFactory.create(gson))
+//                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+//                .client(client)
+//                .build();
+//    }
 
     public FetcherImpl(EventLab lab) {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
@@ -124,12 +129,29 @@ public class FetcherImpl implements Fetcher {
     }
 
     @Override
-    public void register(String cred) {
-
+    public Observable<Pair<String, String>> register(final Pair<String, String> credentials) {
+        NotyRestService service = retrofit.create(NotyRestService.class);
+        Observable<Pair<String, String>> responce = service.hash(credentials)
+                .subscribeOn(Schedulers.io());
+        return responce;
     }
 
+    @Override
+    public void register2(Pair<String, String> credentials) {
+        NotyRestService service = retrofit.create(NotyRestService.class);
 
-//    public List<String> getTokens(List<String> logins) {
+        service.hash(credentials)
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Action1<Object>() {
+                    @Override
+                    public void call(Object s) {
+                        Log.d(TAG, " + |" + s);
+                        Log.d(TAG, " + |" + ((Map) s).get("hash"));
+                    }
+                });
+    }
+
+    //    public List<String> getTokens(List<String> logins) {
 //        NotyRestService service = retrofit.create(NotyRestService.class);
 //        Observable<Pair<String, String>> responce = service.getTokens(logins);
 //

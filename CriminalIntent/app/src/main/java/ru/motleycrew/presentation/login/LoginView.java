@@ -8,4 +8,8 @@ public interface LoginView {
     void showLoading();
 
     void hideLoading();
+
+    void showError();
+
+    void completeLogin();
 }

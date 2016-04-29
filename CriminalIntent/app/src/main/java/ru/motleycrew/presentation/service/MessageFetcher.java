@@ -1,26 +1,33 @@
 package ru.motleycrew.presentation.service;
 
-import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 
-import ru.motleycrew.model.Event;
+import javax.inject.Inject;
+
 import ru.motleycrew.repo.Fetcher;
-import ru.motleycrew.repo.FetcherImpl;
 
 /**
  * Created by User on 11.04.2016.
  */
-public class MessageFetcher extends IntentService {
+public class MessageFetcher extends AbstractService {
 
     private static final String TAG = "MessageFetcher";
-
     private static final String EXTRA_MESSAGE_ID = "ru.motleycrew.presentation.service.messageId";
 
+    @Inject
+    Fetcher fetcher;
+
     public static Intent newInstance(Context context, String messageId) {
-        Intent  i = new Intent(context, MessageFetcher.class);
+        Intent i = new Intent(context, MessageFetcher.class);
         i.putExtra(EXTRA_MESSAGE_ID, messageId);
         return i;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        initDI();
     }
 
     public MessageFetcher() {
@@ -30,7 +37,6 @@ public class MessageFetcher extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         String messageId = intent.getStringExtra(EXTRA_MESSAGE_ID);
-        Fetcher fetcher = new FetcherImpl(getApplicationContext());
         fetcher.downloadMessage(messageId);
     }
 

@@ -6,16 +6,19 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 
-import ru.motleycrew.database.EventDBSchema.EventTable;
-import ru.motleycrew.database.EventDBSchema.ParticipantTable;
-import ru.motleycrew.database.EventDBSchema.JoinTable;
-import ru.motleycrew.model.Event;
-import ru.motleycrew.model.Participant;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import ru.motleycrew.model.Credentials;
+import ru.motleycrew.model.Event;
+import ru.motleycrew.model.Participant;
+
+import static ru.motleycrew.database.EventDBSchema.CredentialsTable;
+import static ru.motleycrew.database.EventDBSchema.EventTable;
+import static ru.motleycrew.database.EventDBSchema.JoinTable;
+import static ru.motleycrew.database.EventDBSchema.ParticipantTable;
 
 /**
  * Created by User on 17.01.2016.
@@ -32,12 +35,12 @@ public class EventLab {
     private SQLiteDatabase mDataBase;
 
 
-    public static EventLab get(Context context) {
-        if (sEventLab == null) {
-            sEventLab = new EventLab(context);
-        }
-        return sEventLab;
-    }
+//    public static EventLab get(Context context) {
+//        if (sEventLab == null) {
+//            sEventLab = new EventLab(context);
+//        }
+//        return sEventLab;
+//    }
 
 
     private static ContentValues getContentValues(Event event) {
@@ -63,6 +66,14 @@ public class EventLab {
         ContentValues values = new ContentValues();
         values.put(JoinTable.Cols.PARTICIPANT_UUID, userId.toString());
         values.put(JoinTable.Cols.UUID, eventId.toString());
+        return values;
+    }
+
+    private static ContentValues getCredentialsValues(Credentials credentials) {
+        ContentValues values = new ContentValues();
+        values.put(CredentialsTable.Cols.NAME, credentials.getEmail());
+        values.put(CredentialsTable.Cols.TOKEN, credentials.getToken());
+        values.put(CredentialsTable.Cols.HASH, credentials.getHash());
         return values;
     }
 
@@ -208,5 +219,39 @@ public class EventLab {
         } finally {
             mDataBase.endTransaction();
         }
+    }
+
+    private CredentialsCursorWrapper queryCredentials(String whereClause, String[] whereArgs) {
+        String tableName = CredentialsTable.NAME;
+        Cursor cursor = mDataBase.query(
+                tableName,
+                null,
+                whereClause,
+                whereArgs,
+                null,
+                null,
+                null
+        );
+        return new CredentialsCursorWrapper(cursor);
+    }
+
+    public Credentials getCredentials() {
+        Credentials credentials = new Credentials();
+        CredentialsCursorWrapper cursor = queryCredentials(null, null);
+        try {
+            if (cursor.moveToFirst()) {
+                credentials = cursor.getCredentials();
+            } else {
+                return null;
+            }
+        } finally {
+            cursor.close();
+        }
+        return credentials;
+    }
+
+    public void addCredentials(Credentials credentials) {
+        ContentValues values = getCredentialsValues(credentials);
+        mDataBase.insert(CredentialsTable.NAME, null, values);
     }
 }

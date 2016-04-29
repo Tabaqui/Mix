@@ -1,7 +1,7 @@
 package ru.motleycrew.repository;
 
 import org.springframework.stereotype.Repository;
-import ru.motleycrew.controller.TokenSwap;
+import ru.motleycrew.controller.json.TokenSwap;
 import ru.motleycrew.entity.User;
 import ru.motleycrew.entity.User_;
 
@@ -22,12 +22,9 @@ import java.util.List;
  */
 @Repository
 @Transactional
-public class UserDao<T extends User> {
+public class UserDao extends AbstractDao {
 
-    @PersistenceContext
-    private EntityManager em;
-
-    public void create(T user) {
+    public void create(User user) {
         em.persist(user);
     }
 
@@ -38,11 +35,11 @@ public class UserDao<T extends User> {
         return tq.getResultList();
     }
 
-    public User find(String login) {
+    public User find(String email) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<User> cq = cb.createQuery(User.class);
         Root<User> root = cq.from(User.class);
-        Predicate p = cb.equal(root.get(User_.login), login);
+        Predicate p = cb.equal(root.get(User_.email), email);
         TypedQuery<User> tq = em.createQuery(cq.where(p));
         try {
             return tq.getSingleResult();
@@ -51,11 +48,11 @@ public class UserDao<T extends User> {
         }
     }
 
-    public List<User> find(List<String> logins) {
+    public List<User> find(List<String> emails) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<User> cq = cb.createQuery(User.class);
         Root<User> root = cq.from(User.class);
-        Predicate p = root.get(User_.login).in(logins);
+        Predicate p = root.get(User_.email).in(emails);
         TypedQuery<User> tq = em.createQuery(cq.where(p));
         return tq.getResultList();
     }
@@ -64,7 +61,7 @@ public class UserDao<T extends User> {
         User user = find(token.getLogin());
         if (user == null) {
             user = new User();
-            user.setLogin(token.getLogin());
+            user.setEmail(token.getLogin());
         }
         user.setToken(token.getNewToken());
         em.merge(user);

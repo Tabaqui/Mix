@@ -1,5 +1,6 @@
-package ru.motleycrew.presentation.evens;
+package ru.motleycrew.presentation.events;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -16,6 +17,12 @@ import ru.motleycrew.presentation.SingleFragmentActivity;
  */
 public class CrimeListActivity extends SingleFragmentActivity
         implements CrimeListFragment.Callbacks, CrimeFragment.Callbacks {
+
+    public static Intent newIntent(Context context) {
+        Intent i = new Intent(context, CrimeListActivity.class);
+        return i;
+    }
+
     @Override
     protected Fragment createFragment() {
         return new CrimeListFragment();

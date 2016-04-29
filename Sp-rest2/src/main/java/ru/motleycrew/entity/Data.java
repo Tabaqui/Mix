@@ -20,8 +20,6 @@ public class Data implements DomainObject {
 
     @Id
     private String id;
-//    @Column(name = "message_id")
-//    private String messageId;
     private String title;
     @Column(name = "created_at")
     @Type(type = "timestamp")
@@ -38,11 +36,6 @@ public class Data implements DomainObject {
         this.id = UUID.randomUUID().toString();
     }
 
-//    public Data(String description) {
-//        this();
-////        this.messageId = description;
-//    }
-
     public String getId() {
         return id;
     }
@@ -50,14 +43,6 @@ public class Data implements DomainObject {
     public void setId(String id) {
         this.id = id;
     }
-
-//    public String getMessageId() {
-//        return messageId;
-//    }
-
-//    public void setMessageId(String messageId) {
-//        this.messageId = messageId;
-//    }
 
     public String getTitle() {
         return title;

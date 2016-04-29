@@ -1,9 +1,8 @@
-package ru.motleycrew.controller;
+package ru.motleycrew.controller.json;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import ru.motleycrew.controller.json.IncomingUser;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -15,22 +14,11 @@ public class IncomingMessage {
     private String date;
     private boolean approved;
     private String text;
-//    @JsonProperty("messageId")
-//    private String id;
     @JsonProperty("to")
     private List<IncomingUser> participants;
 
     public IncomingMessage() {
 
-    }
-
-
-    public IncomingMessage(String title, Date date, boolean approved, String text) {
-        this.title = title;
-        this.text = text;
-        this.approved = approved;
-        this.date = new SimpleDateFormat("yyyy.MM.dd'T'HH:mm:ssZ").format(date);
-//        this.id = messageId;
     }
 
     public String getTitle() {
@@ -64,14 +52,6 @@ public class IncomingMessage {
     public void setText(String text) {
         this.text = text;
     }
-
-//    public String getId() {
-//        return id;
-//    }
-//
-//    public void setId(String id) {
-//        this.id = id;
-//    }
 
     public List<IncomingUser> getParticipants() {
         return participants;

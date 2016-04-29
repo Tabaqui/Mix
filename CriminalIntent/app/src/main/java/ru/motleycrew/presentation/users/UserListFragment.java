@@ -30,13 +30,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import ru.motleycrew.App;
 import ru.motleycrew.R;
 import ru.motleycrew.database.EventLab;
+import ru.motleycrew.di.components.LoginComponent;
 import ru.motleycrew.model.Event;
 import ru.motleycrew.model.Participant;
 import ru.motleycrew.utis.DateUtil;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 /**
  * Created by User on 29.03.2016.
@@ -52,7 +56,18 @@ public class UserListFragment extends Fragment {
     private Button mSuspectButton;
     private Button mCallButton;
     private Event mEvent;
-//    private Button mUserList;
+
+    @Inject
+    EventLab eventLab;
+
+    private LoginComponent component;
+
+    protected void initDI() {
+        component = ((App) getActivity().getApplication())
+                .getAppComponent()
+                .plusLoginComponent();
+        component.inject(this);
+    }
 
     private RecyclerView mRecyclerView;
 
@@ -82,8 +97,9 @@ public class UserListFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         String eventId = (String) getArguments().get(ARG_ID);
-        mEvent = EventLab.get(getActivity()).getEvent(eventId);
-        List<Participant> users = EventLab.get(getActivity()).getParticipants(eventId);
+        initDI();
+        mEvent = eventLab.getEvent(eventId);
+        List<Participant> users = eventLab.getParticipants(eventId);
         mEvent.getParticipants().clear();
         for (Participant p : users) {
             mEvent.addParticipant(p);
@@ -286,7 +302,7 @@ public class UserListFragment extends Fragment {
             if (!mParticipants.contains(user)) {
                 mParticipants.add(user);
                 notifyItemInserted(position);
-                EventLab.get(UserListFragment.this.getActivity()).addUser(user, mEvent.getId());
+                eventLab.addUser(user, mEvent.getId());
             } else {
 //                notifyDataSetChanged();
             }
@@ -294,7 +310,7 @@ public class UserListFragment extends Fragment {
 
         public void remove(int position) {
             Participant user = mParticipants.get(position);
-            EventLab.get(UserListFragment.this.getActivity()).deleteUser(user);
+            eventLab.deleteUser(user);
             mParticipants.remove(position);
             notifyItemRemoved(position);
         }

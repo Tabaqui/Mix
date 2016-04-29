@@ -12,18 +12,7 @@ import javax.transaction.Transactional;
  */
 @Repository("messageDao")
 @Transactional
-public class MessageDao {
-
-    @PersistenceContext
-    private EntityManager em;
-
-    public EntityManager getEm() {
-        return em;
-    }
-
-    public void setEm(EntityManager em) {
-        this.em = em;
-    }
+public class MessageDao extends AbstractDao{
 
     public void create(Data data) {
         em.persist(data);

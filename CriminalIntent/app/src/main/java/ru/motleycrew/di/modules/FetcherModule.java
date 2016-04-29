@@ -1,4 +1,4 @@
-package ru.motleycrew.di;
+package ru.motleycrew.di.modules;
 
 import javax.inject.Singleton;
 

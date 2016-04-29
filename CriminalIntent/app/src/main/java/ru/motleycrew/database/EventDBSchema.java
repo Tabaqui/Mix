@@ -36,4 +36,14 @@ public class EventDBSchema {
             public static final String CONTACT = "contact";
         }
     }
+
+    public static final class CredentialsTable {
+        public static final String NAME = "credentials";
+
+        public static final class Cols {
+            public static final String NAME = "name";
+            public static final String TOKEN = "token";
+            public static final String HASH = "hash";
+        }
+    }
 }

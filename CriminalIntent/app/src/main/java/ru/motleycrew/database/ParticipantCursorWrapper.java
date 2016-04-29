@@ -4,7 +4,7 @@ import android.database.Cursor;
 import android.database.CursorWrapper;
 
 import ru.motleycrew.model.Participant;
-import ru.motleycrew.database.EventDBSchema.ParticipantTable;
+import static ru.motleycrew.database.EventDBSchema.ParticipantTable;
 
 import java.util.UUID;
 

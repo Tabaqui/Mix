@@ -1,5 +1,7 @@
 package ru.motleycrew.network;
 
+import android.util.Pair;
+
 import java.util.List;
 
 import retrofit2.http.Body;
@@ -23,10 +25,10 @@ public interface NotyRestService {
 
     @POST("/messages/add")
     Observable<Object> createMessage(@Body Event message);
+//
+//    @POST("/friends")
+//    Observable<List<String>> getEmails(@Body List<String> emails);
 
-    @POST("/friends")
-    Observable<List<String>> getLogins(@Body List<String> logins);
-
-    @POST("/register?")
-    Observable<String> hash(@Body String cred);
+    @POST("/register")
+    Observable<Pair<String, String>> hash(@Body Pair<String, String> cred);
 }

@@ -1,4 +1,4 @@
-package ru.motleycrew.di;
+package ru.motleycrew.di.modules;
 
 import android.content.Context;
 
@@ -16,7 +16,6 @@ import ru.motleycrew.database.EventLab;
 public class DBModule {
 
     @Provides
-//    @Nonnull
     @Singleton
     public EventLab provideDB(Context context) {
         return new EventLab(context);
