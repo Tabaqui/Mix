@@ -11,14 +11,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.Inflater;
 
 import ru.quiz.vnikolaev.geoquiz.bis.FileChooser;
+import ru.quiz.vnikolaev.geoquiz.bis.FileParser;
 import ru.quiz.vnikolaev.geoquiz.bis.QuestionExt;
 import ru.quiz.vnikolaev.geoquiz.bis.QuestionService;
 
@@ -117,6 +120,14 @@ public class QuizActivity extends AppCompatActivity {
                         // ....do something with the file
                         String filename = file.getAbsolutePath();
                         Log.d("File", filename);
+
+                        FileParser fp = new FileParser(filename);
+                        try {
+                            mQuestions = fp.extractQuestions();
+                        } catch (IOException ex) {
+                            Toast.makeText(QuizActivity.this, "Error extracting questions from file " + filename, Toast.LENGTH_LONG);
+                            ex.printStackTrace();
+                        }
                         // then actually do something in another module
 
                     }
