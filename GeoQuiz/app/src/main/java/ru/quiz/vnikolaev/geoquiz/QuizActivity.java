@@ -24,14 +24,13 @@ import ru.quiz.vnikolaev.geoquiz.bis.FileChooser;
 import ru.quiz.vnikolaev.geoquiz.bis.FileParser;
 import ru.quiz.vnikolaev.geoquiz.bis.QuestionExt;
 import ru.quiz.vnikolaev.geoquiz.bis.QuestionService;
+import ru.quiz.vnikolaev.geoquiz.bis.Quiz;
 
 public class QuizActivity extends AppCompatActivity {
 
     private static final String TAG = "QuizActivity";
     private static final String KEY_INDEX = "index";
-    private static final String KEY_CHEAT = "cheat";
     private static final int REQUEST_CODE_CHEAT = 0;
-
 
     private Button mLTButton;
     private Button mLBButton;
@@ -46,7 +45,7 @@ public class QuizActivity extends AppCompatActivity {
     private TextView mQuestionTextView;
     private int mCurrentIndex = 0;
 
-    private List<QuestionExt> mQuestions;
+    private Quiz mQuiz;
     private String[] mResults;
 
     private View.OnClickListener answerListener = new View.OnClickListener() {
@@ -54,7 +53,7 @@ public class QuizActivity extends AppCompatActivity {
         public void onClick(View view) {
             String answer = ((Button) view).getText().toString();
             saveAnswer(answer);
-            mCurrentIndex = (mCurrentIndex + 1) % mQuestions.size();
+            mCurrentIndex = (mCurrentIndex + 1) % mQuiz.getQuestions().size();
             updateQuestion();
         }
     };
@@ -64,8 +63,9 @@ public class QuizActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate(Bundle) called");
         setContentView(R.layout.activity_quiz);
-        mQuestions = QuestionService.get();
-        mResults = new String[mQuestions.size()];
+//        mQuiz = QuestionService.get();
+        final int qNumber = mQuiz.getQuestions().size();
+        mResults = new String[qNumber];
         mQuestionTextView = (TextView) findViewById(R.id.question_text_view);
         mLTButton = (Button) findViewById(R.id.lt_button);
         mLBButton = (Button) findViewById(R.id.lb_button);
@@ -86,14 +86,14 @@ public class QuizActivity extends AppCompatActivity {
         mPrevButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mCurrentIndex = (mCurrentIndex + mQuestions.size() - 1) % mQuestions.size();
+                mCurrentIndex = (mCurrentIndex + qNumber - 1) % qNumber;
                 updateQuestion();
             }
         });
         mNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mCurrentIndex = (mCurrentIndex + 1) % mQuestions.size();
+                mCurrentIndex = (mCurrentIndex + 1) % qNumber;
                 updateQuestion();
             }
         });
@@ -123,16 +123,17 @@ public class QuizActivity extends AppCompatActivity {
 
                         FileParser fp = new FileParser(filename);
                         try {
-                            mQuestions = fp.extractQuestions();
+                            mQuiz = fp.extractQuestions();
                         } catch (IOException ex) {
-                            Toast.makeText(QuizActivity.this, "Error extracting questions from file " + filename, Toast.LENGTH_LONG);
+                            if (ex.getMessage() == null) {
+                                Toast.makeText(QuizActivity.this, "Error extracting questions from file " + filename + ".", Toast.LENGTH_LONG);
+                            } else {
+                                Toast.makeText(QuizActivity.this, ex.getMessage(), Toast.LENGTH_LONG);
+                            }
                             ex.printStackTrace();
                         }
-                        // then actually do something in another module
-
                     }
                 });
-//                filechooser.setExtension("pdf");
                 filechooser.showDialog();
             default:
                 return super.onOptionsItemSelected(item);
@@ -140,7 +141,7 @@ public class QuizActivity extends AppCompatActivity {
     }
 
     private void updateQuestion() {
-        QuestionExt question = mQuestions.get(mCurrentIndex);
+        QuestionExt question = mQuiz.getQuestions().get(mCurrentIndex);
         mQuestionTextView.setText(question.getValue());
         mLTButton.setText(question.getAnswers().get(0));
         mLBButton.setText(question.getAnswers().get(1));

@@ -22,10 +22,24 @@ public class FileParser {
         this.fileName = fileName;
     }
 
-    public List<QuestionExt> extractQuestions() throws IOException {
-        List<QuestionExt> result = new ArrayList<>();
+    public Quiz extractQuestions() throws IOException {
+        Quiz quiz = new Quiz();
+        List<QuestionExt> questions = new ArrayList<>();
         BufferedReader reader = new BufferedReader(new FileReader(fileName));
         QuestionExt question = null;
+        try {
+            String header = reader.readLine();
+            quiz.setHeader(header);
+        } catch (IOException ex) {
+            throw new IOException("Error read header from file " + fileName,  ex);
+        }
+        try {
+            String number = reader.readLine();
+            int qNumber = Integer.valueOf(number);
+        } catch (Exception ex) {
+            throw new IOException("Error read questions number from file " + fileName, ex);
+        }
+
         for (String line = reader.readLine(); line != null; line = reader.readLine()) {
             line = line.trim();
             if (line.length() > 50) {
@@ -33,18 +47,19 @@ public class FileParser {
             }
             if (line.endsWith(QUESTION_MARK)) {
                 if (question != null && question.getAnswers().size() > 1 && question.getAnswers().size() < 5) {
-                    result.add(question);
+                    questions.add(question);
                 }
                 question = new QuestionExt();
                 question.setValue(line);
             } else {
                 question.getAnswers().add(line);
             }
-            if (result.size() >= 45) {
+            if (questions.size() >= 45) {
                 break;
             }
         }
         reader.close();
-        return result;
+        quiz.setQuestions(questions);
+        return quiz;
     }
 }
