@@ -7,8 +7,18 @@ import java.util.List;
  */
 public class Quiz {
 
+    private String mId;
     private String mHeader;
     private List<QuestionExt> mQuestions;
+    private boolean mPassed;
+
+    public String getId() {
+        return mId;
+    }
+
+    public void setId(String id) {
+        mId = id;
+    }
 
     public String getHeader() {
         return mHeader;
@@ -24,5 +34,13 @@ public class Quiz {
 
     public void setQuestions(List<QuestionExt> questions) {
         mQuestions = questions;
+    }
+
+    public boolean isPassed() {
+        return mPassed;
+    }
+
+    public void setPassed(boolean passed) {
+        mPassed = passed;
     }
 }

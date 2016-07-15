@@ -11,10 +11,7 @@ public class QuizDBSchema {
         public static final class Cols {
             public static final String UUID = "uuid";
             public static final String TITLE = "title";
-//            public static final String DATE = "date";
-//            public static final String APPROVED = "APPROVED";
-//            public static final String MESSAGE_ID = "messageId";
-//            public static final String TEXT = "text";
+            public static final String PASSED = "passed";
         }
     }
 
@@ -22,10 +19,9 @@ public class QuizDBSchema {
         public static final String NAME = "question";
 
         public static final class Cols {
-            public static final String UUID = "uuid";
+            public static final String UUID = "id";
             public static final String VALUE = "value";
             public static final String QUIZ_UUID = "quiz_uuid";
-//            public static final String CONTACT = "contact";
         }
     }
 
@@ -33,9 +29,9 @@ public class QuizDBSchema {
         public static final String NAME = "answer";
 
         public static final class Cols {
-            public static final String NAME = "name";
-            public static final String TOKEN = "token";
-            public static final String HASH = "hash";
+            public static final String UUID = "id";
+            public static final String VALUE = "value";
+            public static final String QUESTION_UUID = "question_id";
         }
     }
 

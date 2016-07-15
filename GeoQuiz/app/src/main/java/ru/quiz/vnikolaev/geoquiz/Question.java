@@ -5,6 +5,7 @@ package ru.quiz.vnikolaev.geoquiz;
  */
 public class Question {
 
+
     private int mTextResId;
     private boolean mAnswerTrue;
 

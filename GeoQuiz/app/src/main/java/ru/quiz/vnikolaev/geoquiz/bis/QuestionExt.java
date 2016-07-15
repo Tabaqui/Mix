@@ -7,8 +7,17 @@ import java.util.List;
  */
 public class QuestionExt {
 
+    private String mId;
     private String mValue;
     private List<String> mAnswers;
+
+    public String getId() {
+        return mId;
+    }
+
+    public void setId(String id) {
+        mId = id;
+    }
 
     public String getValue() {
         return mValue;
