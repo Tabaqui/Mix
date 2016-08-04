@@ -29,9 +29,9 @@ public class Client {
         webClient = new WebClient(BrowserVersion.BEST_SUPPORTED);
         webClient.getOptions().setCssEnabled(false);
         webClient.getCookieManager().setCookiesEnabled(true);
-        webClient.setJavaScriptTimeout(5000);
+        webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setTimeout(10000);
-
+        webClient.getCookieManager().clearCookies();
         webClient.getOptions().setThrowExceptionOnScriptError(false);
     }
 
@@ -54,6 +54,21 @@ public class Client {
             System.out.println("Error get login page");
             return null;
         }
+    }
+
+    private static WebRequest getRequest(String urlString) throws MalformedURLException {
+        URL url = new URL(urlString);
+        WebRequest request = new WebRequest(url, HttpMethod.GET);
+        request.setAdditionalHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        request.setAdditionalHeader("Host", "www.upwork.com");
+        request.setAdditionalHeader("Connection", "keep-alive");
+        request.setAdditionalHeader("Accept-Language", "ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3");
+        request.setAdditionalHeader("Accept-Encoding", "gzip,deflate,br");
+
+
+        refresh = true;
+
+        return request;
     }
 
     private static WebRequest loginRequest(String urlString, UserData data) throws MalformedURLException {
@@ -86,6 +101,25 @@ public class Client {
         request.setAdditionalHeader("Accept-Language", "ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3");
         request.setAdditionalHeader("Accept-Encoding", "gzip, deflate, br");
         request.setAdditionalHeader("X-Requested-With", "XMLHttpRequest");
+        request.setAdditionalHeader("Host", "www.upwork.com");
+        request.setAdditionalHeader("X-NewRelic-ID", "VQIBUF5RGwEGUVdWAAUG");
+        request.setAdditionalHeader("X-Odesk-User-Agent", "oDesk LM");
+        request.setAdditionalHeader("X-Requested-With", "XMLHttpRequest");
+        request.setAdditionalHeader("X-Odesk-Csrf-Token", "f214eabb49d1f1fead7550e7175389ad");
+        request.setAdditionalHeader("Referer", "https://www.upwork.com/ab/find-work/");
+        request.setAdditionalHeader("Cookie", "__cfduid=db894b33bc4389df328a57218568748911469092275; device_view=full; visitor_id=81.5.99.60.1469092274434887" +
+                "; _ga=GA1.2.2014189826.1469092282; _px=qg3VqJqOvGIttlf3AFVSLQwTHViO6QIwUSeZfx0yF7Vjaa8k4QZn5ZZpyZiyAG8vWsfOQ" +
+                "/Dsjuq01U418qXY0g==:1000:jWI5xXCErNGnyOMslObI1kdNVo5rqYKFJh2OJ1mlTHUKjwtFb7vDrv6wL92ZqcKBoHhmYVH328UHr4jgAypVSTQifhEvxubRQutIso7Azn7G4OVOUolmcqN" +
+                "/ukn/np5Y2VdEyFXlfjRXf5dWtxGYXlIex4j44A3sC18/ZdIKdLl3gcCmjhgnaE8mWqK2vJqL6DoTovi6pMWKKjxv2Fre5PLVsNJS" +
+                "+nIvXIe77BUJHOxaGaznATnPhVHnAcNV948SEpzmR5dqlK8+sA0YvTrbPw==; optimizelyEndUserId=oeu1469094605740r0" +
+                ".3265378735443485; session_id=efeb7322f86eb1e6f83c458988a91431; console_user=tabaqui; recognized=1; qt_visitor_id" +
+                "=176.96.251.241.1442665255080088; company_last_accessed=d8760324; XSRF-TOKEN=d902069169208ad4e2e1fb6" +
+                "4d2637736");
+        request.setAdditionalHeader("Connection", "keep-alive");
+        request.setAdditionalHeader("Cache-Control", "max-age=0");
+
+
+
         return request;
     }
 
@@ -104,11 +138,17 @@ public class Client {
 //                    return null;
 //                }
 //            } else {
-                WebRequest loginRequest = loginRequest(urlString, data);
+                WebRequest getRequest = getRequest("https://www.upwork.com/ab/account-security/login");
+                p = webClient.getPage(getRequest);
+//                System.out.println(p.getWebResponse().getContentAsString());
+                WebRequest loginRequest = loginRequest("https://www.upwork.com/ab/account-security/login", data);
                 p = webClient.getPage(loginRequest);
+//                String cntnt = p.getWebResponse().getContentAsString();
+//                System.out.println(cntnt);
 //                p = webClient.getPage(p.getUrl());
             }
-            p = webClient.getPage(findWorkRequest("https://www.upwork.com/ab/find-work/api/feeds/search?topic=2142440"));
+//            p = webClient.getPage(findWorkRequest("https://www.upwork.com/ab/find-work/api/feeds/search?topic=2142440"));
+            p = webClient.getPage(findWorkRequest("https://www.upwork.com/ab/find-work/api/feeds/search"));
             String json = p.getWebResponse().getContentAsString();
             JsonObject jsonObject = new JsonParser().parse(json).getAsJsonObject();
             JsonArray jsonArray = jsonObject.getAsJsonArray("results");

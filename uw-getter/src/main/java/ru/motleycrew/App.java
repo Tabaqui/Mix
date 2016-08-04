@@ -16,7 +16,7 @@ public class App {
     public static void main(String[] args) throws Exception {
         while (true) {
             refreshMessage();
-            Thread.currentThread().sleep(1000 * 60 * 1);
+            Thread.currentThread().sleep(1000 * 30 * 1);
         }
     }
 

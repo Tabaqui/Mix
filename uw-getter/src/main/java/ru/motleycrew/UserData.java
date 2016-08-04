@@ -13,7 +13,7 @@ public class UserData {
 
     public UserData() {
         login = "tabaqui.vn@gmail.com";
-        password = "aeknyy1138";
+        password = "akNol-12058";
         redirect = "/home";
     }
 
