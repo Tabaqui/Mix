@@ -33,16 +33,25 @@ public class FileParser {
         } catch (IOException ex) {
             throw new IOException("Error read header from file " + fileName,  ex);
         }
+//        try {
+//            String number = reader.readLine();
+//            quiz.setTime(Integer.valueOf(number));
+//        } catch (Exception ex) {
+//            throw new IOException("Error read questions number from file " + fileName, ex);
+//        }
         try {
-            String number = reader.readLine();
-            int qNumber = Integer.valueOf(number);
+            long time = Long.parseLong(reader.readLine());
+            quiz.setTime(time);
         } catch (Exception ex) {
-            throw new IOException("Error read questions number from file " + fileName, ex);
+            throw new IOException("Error read time from file " + fileName, ex);
         }
 
         for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+            if (line.isEmpty()) {
+                continue;
+            }
             line = line.trim();
-            if (line.length() > 50) {
+            if (line.length() > 120) {
                 break;
             }
             if (line.endsWith(QUESTION_MARK)) {
@@ -52,9 +61,11 @@ public class FileParser {
                 question = new QuestionExt();
                 question.setValue(line);
             } else {
-                question.getAnswers().add(line);
+                Answer answer = new Answer();
+                answer.setValue(line);
+                question.getAnswers().add(answer);
             }
-            if (questions.size() >= 45) {
+            if (questions.size() >= 120) {
                 break;
             }
         }

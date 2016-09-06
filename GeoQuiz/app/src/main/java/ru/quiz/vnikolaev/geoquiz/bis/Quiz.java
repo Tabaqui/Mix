@@ -1,5 +1,6 @@
 package ru.quiz.vnikolaev.geoquiz.bis;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -7,16 +8,19 @@ import java.util.List;
  */
 public class Quiz {
 
-    private String mId;
+    private long mId;
     private String mHeader;
     private List<QuestionExt> mQuestions;
     private boolean mPassed;
+    private long time;
+    private int questionsNumber;
+    private String url;
 
-    public String getId() {
+    public long getId() {
         return mId;
     }
 
-    public void setId(String id) {
+    public void setId(long id) {
         mId = id;
     }
 
@@ -29,11 +33,38 @@ public class Quiz {
     }
 
     public List<QuestionExt> getQuestions() {
+        if (mQuestions == null) {
+            mQuestions = new ArrayList<>();
+        }
         return mQuestions;
+    }
+
+    public long getTime() {
+        return time;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
+    }
+
+    public int getQuestionsNumber() {
+        return questionsNumber;
+    }
+
+    public void setQuestionsNumber(int questionsNumber) {
+        this.questionsNumber = questionsNumber;
     }
 
     public void setQuestions(List<QuestionExt> questions) {
         mQuestions = questions;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public boolean isPassed() {

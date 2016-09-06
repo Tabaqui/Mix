@@ -7,9 +7,12 @@
     <string name="correct_toast">Correct!</string>
     <string name="incorrect_toast">Incorrect!</string>
 
+    <!-- QuizListActivity -->
+    <string name="load_from_card">From internal</string>
+    <string name="load_from_url">From URL</string>
+    <string name="url_hint">Enter url...</string>
 
     <!-- Old questions -->
-    <string name="action_settings">Load questions</string>
     <string name="question_oceans">The Pacific Ocean is larger than the Atlantic Ocean.</string>
     <string name="question_mideast">The Suez Canal connects the Rad Sea and the Indian Ocean.</string>
     <string name="question_africa">The source of the Nile River is in Egypt.</string>

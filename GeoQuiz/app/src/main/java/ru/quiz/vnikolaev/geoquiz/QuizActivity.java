@@ -1,36 +1,34 @@
 package ru.quiz.vnikolaev.geoquiz;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.zip.Inflater;
+import java.util.Objects;
 
-import ru.quiz.vnikolaev.geoquiz.bis.FileChooser;
-import ru.quiz.vnikolaev.geoquiz.bis.FileParser;
+import ru.quiz.vnikolaev.geoquiz.bis.Answer;
 import ru.quiz.vnikolaev.geoquiz.bis.QuestionExt;
-import ru.quiz.vnikolaev.geoquiz.bis.QuestionService;
 import ru.quiz.vnikolaev.geoquiz.bis.Quiz;
+import ru.quiz.vnikolaev.geoquiz.bis.UserAnswer;
+import ru.quiz.vnikolaev.geoquiz.network.QuizService;
+import ru.quiz.vnikolaev.geoquiz.persistance.QuizDataSource;
 
 public class QuizActivity extends AppCompatActivity {
 
     private static final String TAG = "QuizActivity";
     private static final String KEY_INDEX = "index";
-    private static final int REQUEST_CODE_CHEAT = 0;
+    private static final String QUIZ_INDEX = "quizIndex";
 
     private Button mLTButton;
     private Button mLBButton;
@@ -40,32 +38,79 @@ public class QuizActivity extends AppCompatActivity {
     private ImageButton mNextButton;
     private ImageButton mPrevButton;
 
-    private Toolbar toolbar;
 
     private TextView mQuestionTextView;
     private int mCurrentIndex = 0;
 
     private Quiz mQuiz;
-    private String[] mResults;
+    private QuizDataSource mDS;
+    private UserAnswer mUserAnswer;
 
-    private View.OnClickListener answerListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            String answer = ((Button) view).getText().toString();
-            saveAnswer(answer);
-            mCurrentIndex = (mCurrentIndex + 1) % mQuiz.getQuestions().size();
-            updateQuestion();
+    public class AnswerOnClickListener implements View.OnClickListener {
+
+        private final long mAnswerId;
+        private final UserAnswer mUserAnswer;
+        private final Refresher mButtonRefresher;
+
+        public AnswerOnClickListener(long answerId, UserAnswer userAnswer, Refresher buttonRefresher) {
+            mAnswerId = answerId;
+            mUserAnswer = userAnswer;
+            mButtonRefresher = buttonRefresher;
         }
-    };
+
+        @Override
+        public void onClick(View v) {
+            mUserAnswer.setAnswerId(mAnswerId);
+            mButtonRefresher.clear();
+            ((Button) v).setTextColor(Color.GREEN);
+        }
+    }
+
+    public interface Refresher {
+        void clear();
+    }
+
+    private static class ButtonRefresher implements Refresher {
+        List<Button> mButtons ;
+        ButtonRefresher(List<Button> buttons) {
+            mButtons = buttons;
+        }
+
+        @Override
+        public void clear() {
+            for (Button button : mButtons) {
+                button.setTextColor(Color.WHITE);
+            }
+        }
+    }
+
+    public static Intent getIntent(Context packageContext, long quizId) {
+        Intent intent = new Intent(packageContext, QuizActivity.class);
+        intent.putExtra(QUIZ_INDEX, quizId);
+        return intent;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate(Bundle) called");
         setContentView(R.layout.activity_quiz);
-//        mQuiz = QuestionService.get();
-        final int qNumber = mQuiz.getQuestions().size();
-        mResults = new String[qNumber];
+        long id = getIntent().getLongExtra(QUIZ_INDEX, 0L);
+        mDS = QuizDataSource.get(getApplicationContext());
+        mQuiz = mDS.getQuiz(id);
+        int counter = mQuiz.getQuestionsNumber();
+        List<QuestionExt> questions = new ArrayList<>();
+        if (mQuiz.getUrl() != null) {
+            QuizService service = QuizService.getInstance();
+            try {
+                questions = service.downloadQuiestions(mQuiz.getId(), counter);
+            } catch (IOException ex) {
+                Toast.makeText(this, "Error connecting with server.", Toast.LENGTH_LONG);
+            }
+        } else {
+            questions = mDS.getQuestions(mQuiz.getId(), counter, true);
+        }
+        mQuiz.setQuestions(questions);
         mQuestionTextView = (TextView) findViewById(R.id.question_text_view);
         mLTButton = (Button) findViewById(R.id.lt_button);
         mLBButton = (Button) findViewById(R.id.lb_button);
@@ -74,96 +119,84 @@ public class QuizActivity extends AppCompatActivity {
         mPrevButton = (ImageButton) findViewById(R.id.prev_button);
         mNextButton = (ImageButton) findViewById(R.id.next_button);
 
+
         if (savedInstanceState != null) {
             mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
         }
+        if (mCurrentIndex == 0) {
+            for (QuestionExt question : questions) {
+                if (question.getUserAnswer().getAnswerId() == null) {
+                    break;
+                }
+                mCurrentIndex++;
+            }
+            // TODO: 04.09.2016 This is stub if all questions answered 
+            if (mCurrentIndex >= questions.size()) {
+                mCurrentIndex = 0;
+            }
+        }
         updateQuestion();
-        mLTButton.setOnClickListener(answerListener);
-        mLBButton.setOnClickListener(answerListener);
-        mRTButton.setOnClickListener(answerListener);
-        mRBButton.setOnClickListener(answerListener);
-
         mPrevButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mCurrentIndex = (mCurrentIndex + qNumber - 1) % qNumber;
+                saveAnswer();
+                mCurrentIndex = (mQuiz.getQuestions().size() + mCurrentIndex - 1) % mQuiz.getQuestions().size();
                 updateQuestion();
             }
         });
         mNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mCurrentIndex = (mCurrentIndex + 1) % qNumber;
+                saveAnswer();
+                mCurrentIndex = (mCurrentIndex + 1) % mQuiz.getQuestions().size();
                 updateQuestion();
             }
         });
 
-//        toolbar = (Toolbar) findViewById(R.id.load_questions);
-//        setSupportActionBar(toolbar);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-//        MenuItem item = menu.findItem(R.id.load_questions);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.load_questions:
-                FileChooser filechooser = new FileChooser(QuizActivity.this);
-                filechooser.setFileListener(new FileChooser.FileSelectedListener() {
-                    @Override
-                    public void fileSelected(final File file) {
-                        // ....do something with the file
-                        String filename = file.getAbsolutePath();
-                        Log.d("File", filename);
-
-                        FileParser fp = new FileParser(filename);
-                        try {
-                            mQuiz = fp.extractQuestions();
-                        } catch (IOException ex) {
-                            if (ex.getMessage() == null) {
-                                Toast.makeText(QuizActivity.this, "Error extracting questions from file " + filename + ".", Toast.LENGTH_LONG);
-                            } else {
-                                Toast.makeText(QuizActivity.this, ex.getMessage(), Toast.LENGTH_LONG);
-                            }
-                            ex.printStackTrace();
-                        }
-                    }
-                });
-                filechooser.showDialog();
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
 
     private void updateQuestion() {
         QuestionExt question = mQuiz.getQuestions().get(mCurrentIndex);
         mQuestionTextView.setText(question.getValue());
-        mLTButton.setText(question.getAnswers().get(0));
-        mLBButton.setText(question.getAnswers().get(1));
-        if (question.getAnswers().size() < 4) {
-            mRBButton.setVisibility(View.GONE);
-            if (question.getAnswers().size() < 3) {
-                mRTButton.setVisibility(View.GONE);
-            } else {
-                mRTButton.setVisibility(View.VISIBLE);
-                mRTButton.setText(question.getAnswers().get(2));
-            }
-        } else {
-            mRBButton.setVisibility(View.VISIBLE);
-            mRTButton.setVisibility(View.VISIBLE);
-            mRTButton.setText(question.getAnswers().get(2));
-            mRBButton.setText(question.getAnswers().get(3));
-        }
-
+        List<Answer> answers = mDS.getAnswers(question.getId());
+        question.setAnswers(answers);
+        mUserAnswer = mDS.getUserAnswer(mQuiz.getId(), question.getId());
+        updateUI(question);
     }
 
-    private void saveAnswer(String text) {
-        mResults[mCurrentIndex] = text;
+    private void updateUI(QuestionExt question) {
+        List<Button> buttons = new ArrayList<>();
+        buttons.add(mLTButton);
+        buttons.add(mLBButton);
+        buttons.add(mRTButton);
+        buttons.add(mRBButton);
+        Refresher refresher = new ButtonRefresher(buttons);
+        for (Button button : buttons) {
+            button.setTextColor(Color.WHITE);
+            button.setVisibility(View.GONE);
+        }
+        buttons = buttons.subList(0, question.getAnswers().size());
+        List<Answer> answers = question.getAnswers();
+        Long quaaId = mUserAnswer.getAnswerId();
+        for (int i = 0; i < answers.size(); i++) {
+            buttons.get(i).setText(answers.get(i).getValue());
+            buttons.get(i).setVisibility(View.VISIBLE);
+            buttons.get(i).setOnClickListener(
+                    new AnswerOnClickListener(answers.get(i).getId(), mUserAnswer, refresher));
+            Long aiId = answers.get(i).getId();
+            if (quaaId != null && quaaId.longValue() == aiId) {
+                buttons.get(i).setTextColor(Color.GREEN);
+            } else {
+                buttons.get(i).setTextColor(buttons.get(i).getTextColors().getDefaultColor());
+
+            }
+        }
+    }
+
+    private void saveAnswer() {
+        QuizDataSource ds = QuizDataSource.get(getApplicationContext());
+        ds.updateUserAnswer(mUserAnswer);
     }
 
     @Override
@@ -171,18 +204,6 @@ public class QuizActivity extends AppCompatActivity {
         if (resultCode != RESULT_OK) {
             return;
         }
-        if (requestCode == REQUEST_CODE_CHEAT) {
-            if (data == null) {
-                return;
-            }
-        }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        super.onSaveInstanceState(savedInstanceState);
-        Log.i(TAG, "onSaveInstanceState");
-        savedInstanceState.putInt(KEY_INDEX, mCurrentIndex);
     }
 
 }

@@ -9,7 +9,7 @@ public class QuizDBSchema {
         public static final String NAME = "quiz";
 
         public static final class Cols {
-            public static final String UUID = "uuid";
+            public static final String UUID = "id";
             public static final String TITLE = "title";
             public static final String PASSED = "passed";
         }
@@ -32,6 +32,17 @@ public class QuizDBSchema {
             public static final String UUID = "id";
             public static final String VALUE = "value";
             public static final String QUESTION_UUID = "question_id";
+        }
+    }
+
+    public static final class UserAnswerTable {
+        public static final String NAME = "result";
+
+        public static final class Cols {
+            public static final String QUIZ_ID = "quiz_id";
+            public static final String QUESTION_ID = "question_id";
+            public static final String ANSWER_ID = "answer_id";
+            public static final String NUMBER = "number";
         }
     }
 

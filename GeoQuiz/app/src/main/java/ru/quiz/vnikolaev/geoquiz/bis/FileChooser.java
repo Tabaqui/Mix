@@ -125,7 +125,7 @@ public class FileChooser {
 
             // refres h the user interface
             dialog.setTitle(currentPath.getPath());
-            list.setAdapter(new ArrayAdapter(activity,
+            list.setAdapter(new ArrayAdapter<String>(activity,
                     android.R.layout.simple_list_item_1, fileList) {
                 @Override
                 public View getView(int pos, View view, ViewGroup parent) {

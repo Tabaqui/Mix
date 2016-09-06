@@ -5,14 +5,14 @@ package ru.quiz.vnikolaev.geoquiz.bis;
  */
 public class Answer {
 
-    private String mId;
+    private long mId;
     private String value;
 
-    public String getId() {
+    public long getId() {
         return mId;
     }
 
-    public void setId(String id) {
+    public void setId(long id) {
         mId = id;
     }
 

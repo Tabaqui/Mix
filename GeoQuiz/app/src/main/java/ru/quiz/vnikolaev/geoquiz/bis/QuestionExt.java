@@ -1,5 +1,6 @@
 package ru.quiz.vnikolaev.geoquiz.bis;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -7,15 +8,16 @@ import java.util.List;
  */
 public class QuestionExt {
 
-    private String mId;
+    private long mId;
     private String mValue;
-    private List<String> mAnswers;
+    private List<Answer> mAnswers;
+    private UserAnswer mUserAnswer;
 
-    public String getId() {
+    public long getId() {
         return mId;
     }
 
-    public void setId(String id) {
+    public void setId(long id) {
         mId = id;
     }
 
@@ -27,11 +29,22 @@ public class QuestionExt {
         this.mValue = value;
     }
 
-    public List<String> getAnswers() {
+    public List<Answer> getAnswers() {
+        if (mAnswers == null) {
+            mAnswers = new ArrayList<>();
+        }
         return mAnswers;
     }
 
-    public void setAnswers(List<String> answers) {
+    public void setAnswers(List<Answer> answers) {
         this.mAnswers = answers;
+    }
+
+    public UserAnswer getUserAnswer() {
+        return mUserAnswer;
+    }
+
+    public void setUserAnswer(UserAnswer userAnswer) {
+        mUserAnswer = userAnswer;
     }
 }

@@ -15,7 +15,7 @@ public class QuizCursorWrapper extends CursorWrapper{
     }
 
     public Quiz get() {
-        String uuid = getString(getColumnIndex(QuizDBSchema.QuizTable.Cols.UUID));
+        long uuid = getLong(getColumnIndex(QuizDBSchema.QuizTable.Cols.UUID));
         String title = getString(getColumnIndex(QuizDBSchema.QuizTable.Cols.TITLE));
         int passed = getInt(getColumnIndex(QuizDBSchema.QuizTable.Cols.PASSED));
         Quiz quiz = new Quiz();

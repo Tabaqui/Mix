@@ -19,7 +19,11 @@ public class QuestionService {
         anss.add("Greenland");
         anss.add("Estonia");
         anss.add("Valinor");
-        qe.setAnswers(anss);
+        for (String ans : anss) {
+            Answer answer = new Answer();
+            answer.setValue(ans);
+            qe.getAnswers().add(answer);
+        }
 
         PREPARED_QUESTIONS.add(qe);
 
@@ -30,12 +34,21 @@ public class QuestionService {
         anss.add("Transparent");
         anss.add("Orange");
 //        anss.add("Hello");
-        qe.setAnswers(anss);
+        for (String ans : anss) {
+            Answer answer = new Answer();
+            answer.setValue(ans);
+            qe.getAnswers().add(answer);
+        }
 
         PREPARED_QUESTIONS.add(qe);
     }
 
-    public static List<QuestionExt> get() {
-        return new ArrayList<>(PREPARED_QUESTIONS);
+
+
+    public static Quiz get() {
+        Quiz quiz = new Quiz();
+        quiz.setHeader("First. Test");
+        quiz.setQuestions(PREPARED_QUESTIONS);
+        return quiz;
     }
 }
