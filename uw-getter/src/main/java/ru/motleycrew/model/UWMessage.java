@@ -14,10 +14,10 @@ public class UWMessage {
     private final String href;
     private final String date;
 
-    public UWMessage(String header, Date date, String href) {
+    public UWMessage(String header, String date, String href) {
         this.header = header;
         this.href = "_" + href;
-        this.date = new SimpleDateFormat("HH:mm").format(date);
+        this.date = date;
     }
 
     public String getHeader() {

@@ -21,9 +21,7 @@ public class App {
     }
 
     private static void refreshMessage() throws Exception {
-        String urlString = "https://www.upwork.com//login";
-        UserData data = Client.getLogin(urlString);
-        UWMessage lastMessage = Client.lastWorkHeader(urlString, data);
+        UWMessage lastMessage = Client.lastWorkHeader();
         Client.close();
         if (lastMessage == null) {
             System.out.println(" last message " + " is null");
@@ -44,7 +42,7 @@ public class App {
             return;
         }
 
-        lastHeader = lastHeader.trim();
+        lastHeader = lastHeader.trim().split("\n")[0];
         if (!lastHeader.equals(oldHeader)) {
             System.out.println("_" + StringUtils.difference(lastHeader, oldHeader) + "_");
             ru.motleycrew.Sender.send(lastMessage, "tabaqui");

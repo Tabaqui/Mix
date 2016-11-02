@@ -27,6 +27,7 @@ public class Sender {
             jData.put("header", uwMessage.getHeader());
             jData.put("url", uwMessage.getHref());
             jData.put("date", uwMessage.getDate());
+
             // Where to send GCM message.
             if (topic != null) {
                 jGcmData.put("to", "/topics/" + topic);
@@ -35,6 +36,7 @@ public class Sender {
             }
             // What to send in GCM message.
             jGcmData.put("data", jData);
+            jGcmData.put("priority", "high");
 
             // Create connection to send GCM UWMessage request.
             URL url = new URL("https://android.googleapis.com/gcm/send");
