@@ -78,5 +78,10 @@ public class CheatActivity extends AppCompatActivity {
         savedInstanceState.putBoolean(KEY_ANSWER_SHOWN, mAnswerShown);
     }
 
+    private void atomTest() {
+        System.out.println("atomTest")
+        System.out.println("atomFix")
+    }
+
 
 }
